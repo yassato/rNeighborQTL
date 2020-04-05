@@ -1,2 +1,2 @@
 # rNeighborQTL (beta version)
-This is an R package to perform interval mapping for quantitative trait loci underlying neighbor effects.  
+An R package for interval QTL mapping of neighbor effects.  
