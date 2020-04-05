@@ -1,0 +1,179 @@
+---
+title: "rNeighborQTL"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{rNeighborQTL}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.width=4, fig.height=4,
+  comment = "#>"
+)
+```
+## Overview
+<p>The "rNeighborQTL" package includes core functions to perform a QTL mapping of neighbor effects. The "calc_neiprob()" computes conditional neighbor genotype identity using conditional genotype probabilities, and "scan_neighbor()" conducts interval mapping of neighbor effects. As an argument, the "calc_neiprob()" requires conditional genotype probabilities provided by the "r/qtl2" package (Broman et al. 2018 Genetics). With genotypes, phenotypes, and spatial map (i.e., spatial position along x-axis and y-axis), the "scan_neighbor()" calculates LOD score from the conditional self-genotype probabilities and neighbor genotype identity.</p>
+
+## Input files
+<p>Firstly, let us import genotype and phenotype file using "r/qtl" or "r/qtl2" package. Here is an example to import .csv files into a 'cross' object with "r/qtl", and covert it into a 'cross2' object with "r/qtl2" package. In this example, we import insect herbivory data on Col x Kas RILs of *Arabidopsis thaliana* (Wilson et al. 2001 Genetics).</p>
+```{r input_files}
+colkas = qtl::read.cross(format="csvs",dir=".",
+                    genfile="../inst/ColKasGeno2001.csv",
+                    phefile = "../inst/ColKas_fakePheno.csv",
+                    na.strings = c("_"), estimate.map=TRUE)
+
+colkas = qtl2::convert2cross2(colkas)
+```
+  
+<p>We obtain conditional self-genotype probabilities for pseudo-markers. For this purpose, we can utilize the "r/qtl2" package as follows.</p>
+```{r get_selfprob}
+gmap_colkas = qtl2::insert_pseudomarkers(colkas$gmap, step=1)
+colkas_genoprob = qtl2::calc_genoprob(colkas,gmap_colkas,error_prob=0.002)
+```
+
+## Conditional neighbor genotypic identity
+<p>Then, let us import the "rNeighborQTL" package and see how neighbor effects are tested. Based on the self-genotype probabilities, here we calculate conditional neighbor genotypic identity</p>. 
+```{r neiprob}
+library(devtools)
+document()
+library(rNeighborQTL)
+set.seed(1)
+x = runif(qtl2::n_ind(colkas),1,100)
+y = runif(qtl2::n_ind(colkas),1,100)
+smap_colkas = data.frame(x,y)
+
+colkas_neiprob = calc_neiprob(genoprobs=colkas_genoprob,
+                              gmap=gmap_colkas, contrasts=c(TRUE,TRUE,TRUE),
+                              smap=smap_colkas, scale=33,
+                              a2=1, d2=0)
+```
+<p>where the arguments $a2$ and $d2$ indicates additive and dominance deviation of neighbor QTL effects, respectively.</p>
+
+## Proportion of variation explained by neighbor effects
+<p>Prior to the genome scan, we estimate the 'scale' argument. The "calc_pve()" provides proportion of phenotypic variation (PVE) by neighbor effects for a series of spatial scales. Based on the series of PVE, we calculate $\Delta$PVE and seek the scale $s$ that gives an argument for the maximum for $\Delta$PVE.</p>
+```{r calc_pve}
+s_seq = quantile(dist(smap_colkas),c(0.1*(1:10))) #get quantiles for pairwise distances
+colkas_pve = calc_pve(genoprobs=colkas_genoprob, pheno=colkas$pheno[,2],
+                     gmap=gmap_colkas, contrasts=c(TRUE,TRUE,TRUE),
+                     smap=smap_colkas, s_seq=s_seq)
+```
+
+## QTL effects
+<p>Subsequently, the deviation coefficients $a_2$ and $d_2$ are estimated using a linear regression on the genotype probabilities, also known as Haley-Knott regression (Haley & Knott 1992 Heredity). The "eff_neighbor()" estimates the deviation coeffcients for self and neighbor effects, and plots the results as follows.</p>
+```{r eff_neighbor, fig.width=4, fig.height=8}
+colkas_effect1 = eff_neighbor(genoprobs=colkas_genoprob,
+                                pheno=colkas$pheno[,2],
+                                gmap=gmap_colkas, contrasts=c(TRUE,TRUE,TRUE),
+                                smap=smap_colkas, scale=33, fig=TRUE)
+```
+
+## LOD score
+<p>Lastly, we perform a genome scan to calculate LOD score for neighbor QTL effects. The "scan_neighbor()" calculates likelihoods using the estimated QTL effects through the "eff_neighbor()". The results can be shown by "plot_nei()".</p>
+```{r scan_neighbor}
+colkas_scan1 = scan_neighbor(genoprobs=colkas_genoprob,
+                            pheno=colkas$pheno[,2],
+                            gmap=gmap_colkas, contrasts=c(TRUE,TRUE,TRUE),
+                            smap=smap_colkas, scale=33)
+plot_nei(colkas_scan1, type="neighbor")
+```
+
+## Genome-wide threshold
+<p>The perutation test better accounts data structure but requires much computational cost.</p> 
+```{r perm_neighbor}
+# perm_colkas = perm_neighbor(genoprobs=colkas_genoprob, pheno=colkas$pheno[,2],
+#                             gmap=gmap_colkas, contrasts=c(TRUE,TRUE,TRUE),
+#                             smap=smap_colkas, scale=33,
+#                             times=19, p_val=0.01)
+# plot_nei(colkas_scan1, type="neighbor", th=perm_colkas$LOD_th)
+```
+<p>If the permutation tests are unrealistic, we instead apply a fast but conservative threshold using the likelihood ratio test with Bonferroni correction. The LOD threshold is determined by $\log_{10}(\exp(\chi^2))$, where the $\chi^2$ statistic and its degree-of-freedom is given by $p$-value devided by the number of markers and the number of model parameters, respectively.</p>
+```{r bonf_neighbor}
+plot_nei(colkas_scan1, type="neighbor", th="bonf",ylim=c(0,4))
+```
+
+## Options
+
+### *1. Self-genotype effects*
+<p>In addition to neighbor effects, "scan_neighbor()" provides LOD score for self effects. This result is same as standard QTL mapping. Here is a comparison.</p>
+```{r scan1}
+plot_nei(colkas_scan1, type="self")
+
+colkas_scan1 = qtl2::scan1(colkas_genoprob,pheno=colkas$pheno[,2])
+plot(colkas_scan1, map=gmap_colkas)
+```
+
+### *2. Composite interval mapping*
+<p>In addtion to "addcovar", the "addQTL" argument allows us to include non-focal QTLs as covariates. This option enables composite interval mapping (Jensen et al. 1993 Genetics) that eliminates the additional QTL effects. Note that standard single-QTL analyses are applied for the covariate markers. Here is an example using the Col x Kas herbivory data.</p>
+```{r CIM}
+colkas_scan2 = scan_neighbor(genoprobs=colkas_genoprob,
+                            pheno=colkas$pheno[,2],
+                            gmap=gmap_colkas, contrasts=c(TRUE,TRUE,TRUE),
+                            smap=smap_colkas, scale=33,
+                            addQTL=c("nga59","nga280"))
+plot_nei(colkas_scan2)
+```
+
+### *3. Generalized linear models*
+<p>For positive non-normal traits, the "Gamma" or "inverse.gaussian" families are possible but they may fail to converge due to the model complexity. The quasi-families, such as quasi-poisson or quasi-binomial, are not supported because of the lack of likelihood. Here is an example to analyze the number of leaf holes as a count variable using a Poisson error structure</p>
+```{r glm}
+colkas_scan3 = scan_neighbor(genoprobs=colkas_genoprob,
+                            pheno=colkas$pheno[,3],
+                            gmap=gmap_colkas, contrasts=c(TRUE,TRUE,TRUE),
+                            smap=smap_colkas, scale=33,
+                            response="count")
+plot_nei(colkas_scan3)
+```
+
+### *3. Crossing design*
+<p>Of course, heterozygosity is not expected in inbred lines. We can discard heterozygotes AB as NA, and perform a genome scan for inbred lines as follows.</p>
+```{r inbred}
+colkas = qtl::read.cross(format="csvs",dir=".",
+                    genfile="../inst/ColKasGeno2001_inbred.csv",
+                    phefile = "../inst/ColKas_fakePheno.csv",
+                    na.strings = c("_"), estimate.map=TRUE,
+                    crosstype = "riself")
+
+colkas = qtl2::convert2cross2(colkas)
+gmap_colkas = qtl2::insert_pseudomarkers(colkas$gmap, step=1)
+colkas_genoprob = qtl2::calc_genoprob(colkas,gmap_colkas,error_prob=0.002)
+
+colkas_scan4 = scan_neighbor(genoprobs=colkas_genoprob,
+                            pheno=colkas$pheno[,3],
+                            gmap=gmap_colkas, contrasts=c(TRUE,FALSE,TRUE),
+                            smap=smap_colkas, scale=33,
+                            response="count")
+plot_nei(colkas_scan4)
+```
+  
+<p>We can also scan neighbor QTL effects even if there are only AA or AB genotypes. Note also that the rNeighborGWAS does not support sex chromosomes currently, and they should be excluded before the genome scan. Here is an example to analyze a test dataset of backcrossed lines (Broman et al. 2003).</p>
+```{r fake_bc}
+# #demo using backgrossed lines
+# set.seed(2)
+# data("fake.bc",package="qtl")
+# fake_bc = qtl2::convert2cross2(fake.bc)
+# fake_bc = subset(fake_bc,chr=c(1:9))
+# smap_bc = cbind(runif(qtl2::n_ind(fake_bc),1,100),runif(qtl2::n_ind(fake_bc),1,100))
+# s_seq = quantile(dist(smap_bc),c(0.2*(1:5)))
+# gmap_bc = qtl2::insert_pseudomarkers(fake_bc$gmap, step=1)
+# genoprobs_bc = qtl2::calc_genoprob(fake_bc,gmap_bc,error_prob=0.002)
+# scan_bc = scan_neighbor(genoprobs=genoprobs_bc,
+#                         pheno=fake_bc$pheno[,1],
+#                         gmap=gmap_bc, contrasts=c(TRUE,TRUE,FALSE),
+#                         smap=smap_bc, scale=59,
+#                         addcovar=as.matrix(fake_bc$covar))
+# plot_nei(scan_bc)
+```
+
+## References
+- Broman, K.W., Wu, H., Sen, S., Churchill, G.A., 2003. R/qtl: QTL mapping in experimental crosses. Bioinformatics 19, 889-890.
+- Broman, K.W., Gatti, D.M., Simecek, P., Furlotte, N.A., Prins, P., Sen, Ś., Yandell, B.S., Churchill, G.A., 2019. R/qtl2: Software for Mapping Quantitative Trait Loci with High-Dimensional Data and Multiparent Populations. Genetics 211, 495-502.
+- Haley, C.S., Knott, S.A., 1992. A simple regression method for mapping quantitative trait loci in line crosses using flanking markers. Heredity 69, 315-324.
+- Broman, K.W., Sen, Ś., 2009. Single-QTL analysis, In: A Guide to QTL Mapping with R/qtl. Springer New York, New York, NY, pp. 75-133.
+- Jansen, R.C. 1993. Interval mapping of multiple quantitative trait loci. Genetics 135, 205-211.
+- Faraway, J.J. 2016. Extending the linear model with R: generalized linear, mixed effects and nonparametric regression models. CRC press.
+- Chen et al. 2016. Control for Population Structure and Relatedness for Binary Traits in Genetic Association Studies via Logistic Mixed Models, The American Journal of Human Genetics, 653-666
+
+

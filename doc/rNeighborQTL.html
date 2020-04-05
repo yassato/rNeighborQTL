@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>rNeighborQTL</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">rNeighborQTL</h1>
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>
+The “rNeighborQTL” package includes core functions to perform a QTL mapping of neighbor effects. The “calc_neiprob()” computes conditional neighbor genotype identity using conditional genotype probabilities, and “scan_neighbor()” conducts interval mapping of neighbor effects. As an argument, the “calc_neiprob()” requires conditional genotype probabilities provided by the “r/qtl2” package (Broman et al. 2019). With genotypes, phenotypes, and spatial map (i.e., spatial position along x-axis and y-axis), the “scan_neighbor()” calculates LOD score from the conditional self-genotype probabilities and neighbor genotype identity.
+</p>
+</div>
+<div id="input-files" class="section level2">
+<h2>Input files</h2>
+<p>
+First of all, let us import genotypes and phenotypes using the “r/qtl” or “r/qtl2” package (Broman et al. 2003; Broman et al. 2019). Here is an example to import .csv files into a ‘cross’ object with “r/qtl” package, and covert it into a ‘cross2’ object with “r/qtl2” package. In this example, we import insect herbivory data on Col x Kas recombinant inbred lines of <em>Arabidopsis thaliana</em> (Wilson et al. 2001).
+</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1">colkas &lt;-<span class="st"> </span>qtl<span class="op">::</span><span class="kw">read.cross</span>(<span class="dt">format=</span><span class="st">&quot;csvs&quot;</span>,<span class="dt">dir=</span><span class="st">&quot;.&quot;</span>,</a>
+<a class="sourceLine" id="cb1-2" title="2">                    <span class="dt">genfile=</span><span class="st">&quot;../inst/ColKasGeno2001.csv&quot;</span>,</a>
+<a class="sourceLine" id="cb1-3" title="3">                    <span class="dt">phefile =</span> <span class="st">&quot;../inst/ColKas_fakePheno.csv&quot;</span>,</a>
+<a class="sourceLine" id="cb1-4" title="4">                    <span class="dt">na.strings =</span> <span class="kw">c</span>(<span class="st">&quot;_&quot;</span>), <span class="dt">estimate.map=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="co">#&gt;  --Read the following data:</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="co">#&gt;   129  individuals</span></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="co">#&gt;   26  markers</span></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="co">#&gt;   3  phenotypes</span></a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="co">#&gt;  --Estimating genetic map</span></a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="co">#&gt;  --Cross type: f2</span></a>
+<a class="sourceLine" id="cb1-11" title="11"></a>
+<a class="sourceLine" id="cb1-12" title="12">colkas &lt;-<span class="st"> </span>qtl2<span class="op">::</span><span class="kw">convert2cross2</span>(colkas)</a></code></pre></div>
+<p>
+Subsequently, we obtain conditional self-genotype probabilities for pseudo-markers. For this purpose, we can use the “r/qtl2” package as follows.
+</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">gmap_colkas &lt;-<span class="st"> </span>qtl2<span class="op">::</span><span class="kw">insert_pseudomarkers</span>(colkas<span class="op">$</span>gmap, <span class="dt">step=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-2" title="2">colkas_genoprob &lt;-<span class="st"> </span>qtl2<span class="op">::</span><span class="kw">calc_genoprob</span>(colkas,gmap_colkas,<span class="dt">error_prob=</span><span class="fl">0.002</span>)</a></code></pre></div>
+</div>
+<div id="conditional-neighbor-genotypic-identity" class="section level2">
+<h2>Conditional neighbor genotypic identity</h2>
+<p>
+Then, let us import the “rNeighborQTL” package and see how to test neighbor effects. Based on the self-genotype probabilities, here we calculate conditional neighbor genotypic identity
+</p>
+<p>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">library</span>(rNeighborQTL)</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb3-3" title="3">x &lt;-<span class="st"> </span><span class="kw">runif</span>(qtl2<span class="op">::</span><span class="kw">n_ind</span>(colkas),<span class="dv">1</span>,<span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb3-4" title="4">y &lt;-<span class="st"> </span><span class="kw">runif</span>(qtl2<span class="op">::</span><span class="kw">n_ind</span>(colkas),<span class="dv">1</span>,<span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb3-5" title="5">smap_colkas &lt;-<span class="st"> </span><span class="kw">data.frame</span>(x,y)</a>
+<a class="sourceLine" id="cb3-6" title="6"></a>
+<a class="sourceLine" id="cb3-7" title="7">colkas_neiprob &lt;-<span class="st"> </span><span class="kw">calc_neiprob</span>(<span class="dt">genoprobs=</span>colkas_genoprob,</a>
+<a class="sourceLine" id="cb3-8" title="8">                              <span class="dt">gmap=</span>gmap_colkas, <span class="dt">contrasts=</span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb3-9" title="9">                              <span class="dt">smap=</span>smap_colkas, <span class="dt">scale=</span><span class="dv">33</span>,</a>
+<a class="sourceLine" id="cb3-10" title="10">                              <span class="dt">a2=</span><span class="dv">1</span>, <span class="dt">d2=</span><span class="dv">0</span>)</a></code></pre></div>
+<p>
+where the arguments <span class="math inline">\(a_2\)</span> and <span class="math inline">\(d_2\)</span> indicates additive and dominance deviation of neighbor QTL effects, respectively.
+</p>
+</div>
+<div id="proportion-of-variation-explained-by-neighbor-effects" class="section level2">
+<h2>Proportion of variation explained by neighbor effects</h2>
+<p>
+Prior to the genome scan, we estimate the ‘scale’ argument. The “calc_pve()” computes proportion of phenotypic variation (PVE) by neighbor effects for a series of spatial scales. Based on the series of PVE, we calculate <span class="math inline">\(\Delta\)</span>PVE and seek the scale <span class="math inline">\(s\)</span> that gives an argument for the maximum of <span class="math inline">\(\Delta\)</span>PVE.
+</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">s_seq &lt;-<span class="st"> </span><span class="kw">quantile</span>(<span class="kw">dist</span>(smap_colkas),<span class="kw">c</span>(<span class="fl">0.1</span><span class="op">*</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>))) <span class="co">#get quantiles for pairwise distances</span></a>
+<a class="sourceLine" id="cb4-2" title="2">colkas_pve &lt;-<span class="st"> </span><span class="kw">calc_pve</span>(<span class="dt">genoprobs=</span>colkas_genoprob, <span class="dt">pheno=</span>colkas<span class="op">$</span>pheno[,<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb4-3" title="3">                       <span class="dt">gmap=</span>gmap_colkas, <span class="dt">contrasts=</span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb4-4" title="4">                       <span class="dt">smap=</span>smap_colkas, <span class="dt">s_seq=</span>s_seq)</a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; [1] &quot;spatial scale at 18.65&quot;</span></a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt; [1] &quot;spatial scale at 26.61&quot;</span></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="co">#&gt; [1] &quot;spatial scale at 33.72&quot;</span></a>
+<a class="sourceLine" id="cb4-8" title="8"><span class="co">#&gt; [1] &quot;spatial scale at 40.4&quot;</span></a>
+<a class="sourceLine" id="cb4-9" title="9"><span class="co">#&gt; [1] &quot;spatial scale at 46.78&quot;</span></a>
+<a class="sourceLine" id="cb4-10" title="10"><span class="co">#&gt; [1] &quot;spatial scale at 53.18&quot;</span></a>
+<a class="sourceLine" id="cb4-11" title="11"><span class="co">#&gt; [1] &quot;spatial scale at 60.49&quot;</span></a>
+<a class="sourceLine" id="cb4-12" title="12"><span class="co">#&gt; [1] &quot;spatial scale at 68.68&quot;</span></a>
+<a class="sourceLine" id="cb4-13" title="13"><span class="co">#&gt; [1] &quot;spatial scale at 79.49&quot;</span></a>
+<a class="sourceLine" id="cb4-14" title="14"><span class="co">#&gt; [1] &quot;spatial scale at 125.93&quot;</span></a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="qtl-effects" class="section level2">
+<h2>QTL effects</h2>
+<p>
+The deviation coefficients <span class="math inline">\(a_2\)</span> and <span class="math inline">\(d_2\)</span> are estimated using a linear regression on the genotype probabilities, also known as Haley-Knott regression (Haley &amp; Knott 1992). The “eff_neighbor()” estimates the coefficients for self and neighbor effects, and plots the results as follows.
+</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">colkas_effect1 &lt;-<span class="st"> </span><span class="kw">eff_neighbor</span>(<span class="dt">genoprobs=</span>colkas_genoprob,</a>
+<a class="sourceLine" id="cb5-2" title="2">                                  <span class="dt">pheno=</span>colkas<span class="op">$</span>pheno[,<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb5-3" title="3">                                  <span class="dt">gmap=</span>gmap_colkas, <span class="dt">contrasts=</span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb5-4" title="4">                                  <span class="dt">smap=</span>smap_colkas, <span class="dt">scale=</span><span class="dv">33</span>, <span class="dt">fig=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="lod-score" class="section level2">
+<h2>LOD score</h2>
+<p>
+Lastly, we perform a genome scan to calculate LOD score for neighbor QTL effects. The “scan_neighbor()” calculates likelihoods using the estimated QTL effects through the “eff_neighbor()”. The results can be shown by “plot_nei()”.
+</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">colkas_scan1 &lt;-<span class="st"> </span><span class="kw">scan_neighbor</span>(<span class="dt">genoprobs=</span>colkas_genoprob,</a>
+<a class="sourceLine" id="cb6-2" title="2">                              <span class="dt">pheno=</span>colkas<span class="op">$</span>pheno[,<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb6-3" title="3">                              <span class="dt">gmap=</span>gmap_colkas, <span class="dt">contrasts=</span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb6-4" title="4">                              <span class="dt">smap=</span>smap_colkas, <span class="dt">scale=</span><span class="dv">33</span>)</a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="kw">plot_nei</span>(colkas_scan1, <span class="dt">type=</span><span class="st">&quot;neighbor&quot;</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="options" class="section level2">
+<h2>Options</h2>
+<div id="genome-wide-threshold-for-the-lod-score" class="section level3">
+<h3><em>1. Genome-wide threshold for the LOD score</em></h3>
+<p>
+In addition to the genome scan, we can perform permutation tests to add a genome-wide LOD threshold. Such permutation tests better account data structure, but require much computational cost.
+</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">perm_colkas &lt;-<span class="st"> </span><span class="kw">perm_neighbor</span>(<span class="dt">genoprobs=</span>colkas_genoprob, <span class="dt">pheno=</span>colkas<span class="op">$</span>pheno[,<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb7-2" title="2">                              <span class="dt">gmap=</span>gmap_colkas, <span class="dt">contrasts=</span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb7-3" title="3">                              <span class="dt">smap=</span>smap_colkas, <span class="dt">scale=</span><span class="dv">33</span>,</a>
+<a class="sourceLine" id="cb7-4" title="4">                              <span class="dt">times=</span><span class="dv">9</span>, <span class="dt">p_val=</span><span class="fl">0.01</span>)</a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="kw">plot_nei</span>(colkas_scan1, <span class="dt">type=</span><span class="st">&quot;neighbor&quot;</span>, <span class="dt">th=</span>perm_colkas<span class="op">$</span>LOD_th)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>
+If the permutation tests are unrealistic, we instead apply a fast but conservative threshold using the likelihood ratio test with Bonferroni correction. The LOD threshold is determined by <span class="math inline">\(\log_{10}(\exp(\chi^2))\)</span>, where the <span class="math inline">\(\chi^2\)</span> statistic and its degree-of-freedom is given by <span class="math inline">\(p\)</span>-value divided by the number of markers and the number of model parameters, respectively.
+</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">plot_nei</span>(colkas_scan1, <span class="dt">type=</span><span class="st">&quot;neighbor&quot;</span>, <span class="dt">th=</span><span class="st">&quot;bonf&quot;</span>,<span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="fl">4.5</span>))</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="self-genotype-effects" class="section level3">
+<h3><em>2. Self-genotype effects</em></h3>
+<p>
+The “scan_neighbor()” also provides LOD score for self effects. This result is same as standard QTL mapping.
+</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">plot_nei</span>(colkas_scan1, <span class="dt">type=</span><span class="st">&quot;self&quot;</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">colkas_scan1 &lt;-<span class="st"> </span>qtl2<span class="op">::</span><span class="kw">scan1</span>(colkas_genoprob,<span class="dt">pheno=</span>colkas<span class="op">$</span>pheno[,<span class="dv">2</span>])</a>
+<a class="sourceLine" id="cb10-2" title="2"><span class="kw">plot</span>(colkas_scan1, <span class="dt">map=</span>gmap_colkas)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="composite-interval-mapping" class="section level3">
+<h3><em>3. Composite interval mapping</em></h3>
+<p>
+The “addQTL” argument allows us to include non-focal QTLs as covariates. This option enables composite interval mapping (Jensen et al. 1993) that eliminates the additional QTL effects. Note that standard single-QTL analyses are applied for the covariate markers. Here is an example using the Col x Kas herbivory data.
+</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">colkas_scan2 &lt;-<span class="st"> </span><span class="kw">scan_neighbor</span>(<span class="dt">genoprobs=</span>colkas_genoprob,</a>
+<a class="sourceLine" id="cb11-2" title="2">                              <span class="dt">pheno=</span>colkas<span class="op">$</span>pheno[,<span class="dv">2</span>],</a>
+<a class="sourceLine" id="cb11-3" title="3">                              <span class="dt">gmap=</span>gmap_colkas, <span class="dt">contrasts=</span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb11-4" title="4">                              <span class="dt">smap=</span>smap_colkas, <span class="dt">scale=</span><span class="dv">33</span>,</a>
+<a class="sourceLine" id="cb11-5" title="5">                              <span class="dt">addQTL=</span><span class="kw">c</span>(<span class="st">&quot;nga59&quot;</span>,<span class="st">&quot;nga280&quot;</span>))</a>
+<a class="sourceLine" id="cb11-6" title="6"><span class="kw">plot_nei</span>(colkas_scan2)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="generalized-linear-models" class="section level3">
+<h3><em>4. Generalized linear models</em></h3>
+<p>
+The “response” argument allows us to analyze non-normal traits. The “quantitative”, “binary”, and “count” response links to Gaussian, binomial, and Poisson family in generalized linear models, respectively (Faraway 2016). Here is an example to analyze the number of leaf holes as a count variable using a Poisson error structure.
+</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">colkas_scan3 &lt;-<span class="st"> </span><span class="kw">scan_neighbor</span>(<span class="dt">genoprobs=</span>colkas_genoprob,</a>
+<a class="sourceLine" id="cb12-2" title="2">                              <span class="dt">pheno=</span>colkas<span class="op">$</span>pheno[,<span class="dv">3</span>],</a>
+<a class="sourceLine" id="cb12-3" title="3">                              <span class="dt">gmap=</span>gmap_colkas, <span class="dt">contrasts=</span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb12-4" title="4">                              <span class="dt">smap=</span>smap_colkas, <span class="dt">scale=</span><span class="dv">33</span>,</a>
+<a class="sourceLine" id="cb12-5" title="5">                              <span class="dt">response=</span><span class="st">&quot;count&quot;</span>)</a>
+<a class="sourceLine" id="cb12-6" title="6"><span class="kw">plot_nei</span>(colkas_scan3)</a></code></pre></div>
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAh1BMVEUAAAAAADoAAGYAAP8AOjoAOmYAOpAAZrYAzQAA//86AAA6OgA6OpA6ZpA6ZrY6kNtmAABmOgBmOjpmkLZmkNtmtttmtv+QOgCQZjqQtpCQ29uQ2/+2ZgC2Zjq227a22/+2///bkDrbtmbbtpDb29vb////AAD/tmb/25D/27b//7b//9v///8gPrt5AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAIa0lEQVR4nO3di3qbNgAFYJKujZytbdZtzbayJd4WO415/+cbkpC4cwRIIPA5++YQrHD5K4QgwkkyZjDJ2hsQewgEQiAQAoEQCIRAIAQCIRAIgUAIBEIgEAKBEAiEQCAEAiEQCIFACARCIBACgRAIhEAgBAIhEAiBQAgEQiAQAoEQCIRAIAQCIRBIdECXx+TDS23OMbn5ZqbT5PZ52e0hEEh0QO1cLVC+43/+lSTv1d5f8qmbTy+2Bl3UO8qjWi6f8feXJPn4pJbwbz75wy8vell//JzcPvnfylWBdGT9eHtQk++fC6D8Vb7zowbSkXUnrUybN6Tn0U75zrpA75/k62dVM56y1/t8UgOdk+Tu5ZImBdCHspyc/id/N5PF85J6vi7zX4CtXBfoq9rNO1mBPqs5t88aSLc1+WwN9DUriqS6PVJvF+1RWpYJkXXbIH1w3Uklc7gpIHMqM22QKWdQjqagWUy1IfebOIDOSR1Ia3QCWRRT5iwrz96B8hpkjhDWIJvKjpvakJnTfL0NqgIpyY42aN9AsvH9Lfv+YCtP/SxWA7rtPovtHKjoB+UzuvpBNaCeftDOgbLvv9/rDnKlJ/3TU1cb1OxJ/1ouK0TivhZLg3SORyVSoPxQ+lR0IldOpEBn2y9ae0siBcq+f8nbpJuPAS7PRyZWoGhCIBACgRAIhEAgBAIhEAiBQAgEQiAQAoEQCIRAIAQCIRAIgUAIBEIgEAKBEAiEQCAEAiEQCIFACARCIBACgXgGSjaTZYHGr3ftLAwUanGOK53w73JNQJNqLoHQD3kvuMri3NZJILRStkEgYvyPEAiEQCAEAiEQCIFAAgHph3CS/ofXrxzoqB69zeSTAp89LM5bYgG6PFqWY89TOKsATfAJA/T2YB+9PvccZNcNxBqEcjTPJsfVBi0F9CafqU179twWUel9DnDPQOebb0f5SP+gkLf1+swyQLKBkS3LcdYH9OwYSJ6iJFDf+amePsYdA5kalE55znjd32os2gYd533MzJ6B9Clq5mPGuwZyiPwwCFXDrrQNQjnm9evtQT7rf4VAlQutvmjDy+NAZ2DHQA7nd2OYn+iuEMhcRQx8kqM9CtO7KwRyiWHRnww1e3G+Eg+QvZy/PF4jkPqsvg32g6b4TGqki8963FxPeiEg0wL33Sv0vF6PWQjInMPdruZnr9djWINA2AaBLAXEs9i8gqsszikEAlkMKFWfoTrrlxq7BtI3o/XtnsnZMdCsftCqN+2X7gexo9hTUPeAXu8395vVq+oHiQl7e1WneQKBxAwkx3Uc5/75lxWAJvlM7Ae93t9l6ar9oIiBZD/onJ/I1r0fFDlQKj9in0A9BdO7twc5woyHWE/Btwf192AGfYKPtI8ZyCHhR9pvG2iBcdLbBlpgpL07kGhNjMrua5CIEWiBkfYbBwo+0l447+7yQHrf5/6toeWAbMmFgNJicOa6N+2dgUS2MNDZ3Ch7vXf6zWqgEWbRAlU60JOu5ts37adJNYH6dl5kCwNVnvHxdLE67fcbEQPBLuDI9QYFEgSy33eWEtX3rhmop9soKq9RAdmh1P03POYDVfe3G0h0fRmb0UBw12V6R/+21xsOqFFzlgFyDbiftgSQiBpI3dZ3Wlw4oMbEYkD6bqq3a7FQQK2LVPnl3fg1jQYqLsK8XYsNAA0MknEAak6NBSrWHvpaDCxuCGhoGFF4ILP2GddiXsZJJ/2bMAtItCYVkLvQRCDvHUUCDS5uEGhOGyTa0yOBJrZBSx5iWXbqfacJ1DyJi9Y36mUMUHYwG+iWQI10GKDWd2I80KG+oTCBTvP7A/LcUQwC1D7eRgMdpgP5CYEcFxcpkPWZAeRnpH0IoPY5X4wHslvs+BOegFqL8wtUv4VYfVfP2zZQu1voC0iMBSp94gJqEvUCiawTSPQA5QveMpCZDgZUtnmOQBWfqIBaB9kGgRxv2rsuLghQ68p+LFDVJ4Z+UPUQq6+lA0jPGgck7HJdgBobcRVAds47JTSo1NwKAjU3LHKg2mraQKcKUO2m4Vig3ptxCwE5j7RvnuadgGRBURUaDdRxO9defC3RBjmPtK/e1mxO2vpSiZqj9i4Y0KE+OwiQ+zjpFlCVCQJVfjcospKp+UPlDAn0rgSqIS0J5D7SvgKUlG8kbkB2z0U2FigrfCpCh9qX5obiBK9B1auzBlC5H7YNUrOUihgPJIUOhyaQplkEyH2kfRdQ0gQqdkS+lDXICG0TyHmkfQFUO38V06aJOJ1sg5EkTSB526OsTE5AeXEpJD3qbdChfJ2y32H6QSVQs/NhEE7ZAJA00ZMlUMunDqSKy1cpYWrNofbStaHOe+QrJUzWCZQkJcNJQRmvWnkhLJD8z1DVY+cktWTSo2CRYPlk2yc40NBIe7uhbaCkQqQanvx/jZVPnU5lTbFAwky2gSpLbQEpo4P+/tDhs3QNqm1eY6qvrAFSyXWyOlBmDzZnIH2cHQ5WpHP9xVvOu+Za0H1xJVBvKfD+uOL9/yCRAjns/ygfWLxcX7Ng/w+ufbEafVa+WI0/q11qbCYhgLyNQ9tSPNeg/cXzxer+4vlidX/ZzGlnrRAIhEAgBAIhEAiBQAgEQiAQAoEQCIRAIAQCIRAIgUAIBEIgEAKBEAiEQCAEAiEQCIFACARCIBACgRAIhEAgBAIhEAiBQAgEQiAQAoEQCIRAIAQCIRAIgUAIBEIgEAKBEAiEQCAEAiEQCIFACARCIBACgRAIhEAgBAIhEAiBQAgEQiAQAoEQCIRAIAQCIRAIgUAIBEIgEAKBEAiEQCAEAiEQCIFACARCIBACgRAIhEAgBAIhEAiBQAgEQiAQAoEQCIRAIAQCIRAIgUAIBEIgEAKBEAiEQCAEAiEQyP8OaOhLsIgY4QAAAABJRU5ErkJggg==" /><!-- -->
+<p>
+The “binary” response is also supported by the “calc_pve()” as it can call a logistic mixed model (Chen et al. 2016).
+</p>
+</div>
+<div id="crossing-design" class="section level3">
+<h3><em>5. Crossing design</em></h3>
+<p>
+Of course, heterozygotes are not expected in inbred lines. We can discard heterozygotes AB as NA, and perform a genome scan for inbred lines as follows.
+</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">colkas &lt;-<span class="st"> </span>qtl<span class="op">::</span><span class="kw">read.cross</span>(<span class="dt">format=</span><span class="st">&quot;csvs&quot;</span>,<span class="dt">dir=</span><span class="st">&quot;.&quot;</span>,</a>
+<a class="sourceLine" id="cb13-2" title="2">                      <span class="dt">genfile=</span><span class="st">&quot;../inst/ColKasGeno2001_inbred.csv&quot;</span>,</a>
+<a class="sourceLine" id="cb13-3" title="3">                      <span class="dt">phefile =</span> <span class="st">&quot;../inst/ColKas_fakePheno.csv&quot;</span>,</a>
+<a class="sourceLine" id="cb13-4" title="4">                      <span class="dt">na.strings =</span> <span class="kw">c</span>(<span class="st">&quot;_&quot;</span>), <span class="dt">estimate.map=</span><span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb13-5" title="5">                      <span class="dt">crosstype =</span> <span class="st">&quot;riself&quot;</span>)</a>
+<a class="sourceLine" id="cb13-6" title="6"><span class="co">#&gt;  --Read the following data:</span></a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="co">#&gt;   129  individuals</span></a>
+<a class="sourceLine" id="cb13-8" title="8"><span class="co">#&gt;   26  markers</span></a>
+<a class="sourceLine" id="cb13-9" title="9"><span class="co">#&gt;   3  phenotypes</span></a>
+<a class="sourceLine" id="cb13-10" title="10"><span class="co">#&gt;  --Estimating genetic map</span></a>
+<a class="sourceLine" id="cb13-11" title="11"><span class="co">#&gt;  --Cross type: riself</span></a>
+<a class="sourceLine" id="cb13-12" title="12"></a>
+<a class="sourceLine" id="cb13-13" title="13">colkas &lt;-<span class="st"> </span>qtl2<span class="op">::</span><span class="kw">convert2cross2</span>(colkas)</a>
+<a class="sourceLine" id="cb13-14" title="14">gmap_colkas &lt;-<span class="st"> </span>qtl2<span class="op">::</span><span class="kw">insert_pseudomarkers</span>(colkas<span class="op">$</span>gmap, <span class="dt">step=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb13-15" title="15">colkas_genoprob &lt;-<span class="st"> </span>qtl2<span class="op">::</span><span class="kw">calc_genoprob</span>(colkas,gmap_colkas,<span class="dt">error_prob=</span><span class="fl">0.002</span>)</a>
+<a class="sourceLine" id="cb13-16" title="16"></a>
+<a class="sourceLine" id="cb13-17" title="17">colkas_scan4 &lt;-<span class="st"> </span><span class="kw">scan_neighbor</span>(<span class="dt">genoprobs=</span>colkas_genoprob,</a>
+<a class="sourceLine" id="cb13-18" title="18">                              <span class="dt">pheno=</span>colkas<span class="op">$</span>pheno[,<span class="dv">3</span>],</a>
+<a class="sourceLine" id="cb13-19" title="19">                              <span class="dt">gmap=</span>gmap_colkas, <span class="dt">contrasts=</span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">FALSE</span>,<span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb13-20" title="20">                              <span class="dt">smap=</span>smap_colkas, <span class="dt">scale=</span><span class="dv">33</span>,</a>
+<a class="sourceLine" id="cb13-21" title="21">                              <span class="dt">response=</span><span class="st">&quot;count&quot;</span>)</a>
+<a class="sourceLine" id="cb13-22" title="22"><span class="kw">plot_nei</span>(colkas_scan4)</a></code></pre></div>
+<img src="data:image/png;base64,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" /><!-- -->
+<p>
+We can also scan neighbor QTL effects even if there are only AA or AB genotypes. Note also that the “rNeighborQTL” does not support sex chromosomes currently, and they should be excluded before the genome scan. Examples using fake datasets (Broman et al. 2003) are shown in the “scan_neighbor()”.
+</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1">?scan_neighbor</a></code></pre></div>
+</div>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<ul>
+<li>Broman KW, Wu H, Sen S, Churchill GA. 2003. R/qtl: QTL mapping in experimental crosses. Bioinformatics 19: 889-890.</li>
+<li>Broman KW, Sen S, 2009. Single-QTL analysis, In: A guide to QTL mapping with R/qtl. Springer New York, New York, NY, pp. 75-133.</li>
+<li>Broman KW, Gatti DM, Simecek P, Furlotte NA, Prins P, Sen S, Yandell BS, Churchill GA. 2019. R/qtl2: Software for mapping quantitative trait loci with high-dimensional data and multiparent populations. Genetics 211: 495-502.</li>
+<li>Chen H, Wang C, Conomos M. et al. 2016. Control for population structure and relatedness for binary traits in genetic association studies via logistic mixed models. The American Journal of Human Genetics 98: 653-666.</li>
+<li>Faraway JJ. 2016. Extending the linear model with R: generalized linear, mixed effects and nonparametric regression models. CRC press.</li>
+<li>Haley CS, Knott SA. 1992. A simple regression method for mapping quantitative trait loci in line crosses using flanking markers. Heredity 69: 315-324.</li>
+<li>Jansen RC. 1993. Interval mapping of multiple quantitative trait loci. Genetics 135: 205-211.</li>
+<li>Wilson IW, Schiff CL, Hughes DE, Somerville SC. 2001. Quantitative trait loci analysis of powdery mildew disease resistance in the <em>Arabidopsis thaliana</em> accession kashmir-1. Genetics 158: 1301-1309.</li>
+</ul>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

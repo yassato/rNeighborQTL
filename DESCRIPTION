@@ -1,0 +1,24 @@
+Package: rNeighborQTL
+Title: Interval mapping for quantitative trait loci underlying neighbor effects
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Yasuhiro",
+           family = "Sato",
+           role = c("aut", "cre"),
+           email = "sato.yasuhiro.36c@kyoto-u.jp",
+           comment = c(ORCID = "0000-0002-6466-723X"))
+Description: To enable quantitative trait loci mapping of neighbor effects, this package extends a single-marker analysis to interval mapping.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Imports: 
+    gaston,
+    Matrix,
+    qtl,
+    qtl2
