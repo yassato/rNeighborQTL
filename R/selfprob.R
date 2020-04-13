@@ -6,7 +6,7 @@
 #' @param d1 A numeric scalar indicating dominance deviation.
 #' @param AA An individual x marker matrix of conditional probabilities for AA genotype.
 #' @param AB An individual x marker matrix of conditional probabilities for AB genotype. Input NA if heterozygotes are absent.
-#' @param BB An individual x marker matrix of conditional probabilities for BB genotype. Input NA for backcrossing.
+#' @param BB An individual x marker matrix of conditional probabilities for BB genotype. Input NA for backcross lines.
 #' @return A numeric vector containing each marker effect for individual i.
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 selfprob = function(i, a1, d1, AA, AB, BB) {

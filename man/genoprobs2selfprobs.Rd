@@ -15,7 +15,7 @@ genoprobs2selfprobs(genoprobs, gmap, a1, d1, contrasts = c(TRUE, TRUE, TRUE))
 
 \item{d1}{A numeric scalar indicating dominance deviation.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(T/F, T/F, T/F) = AA, AB, BB.}
+\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 }
 \value{
 A numeric matrix containing individuals x marker elements for self QTL effects.

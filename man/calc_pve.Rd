@@ -24,7 +24,7 @@ calc_pve(
 
 \item{gmap}{Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(T/F, T/F, T/F) = AA, AB, BB.}
+\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 
 \item{smap}{A matrix showing a spatial map. The first and second column include spatial points along a x-axis and y-axis, respectively.}
 
@@ -47,7 +47,7 @@ A matrix containing the maximum neighbor distance, PVE by neighbor effects, and 
 }
 }
 \description{
-A function to calculate PVE by neighbor effects for a series of neighbor distance (\code{d_range}) using a linear mixed model.
+A function to calculate PVE by neighbor effects for a series of neighbor distance (\code{s_seq}) using a linear mixed model.
 }
 \details{
 This function uses mixed models via the \code{gaston} package (Perdry & Dandine-Roulland 2020).
@@ -55,21 +55,20 @@ If \code{"binary"} is selected, \code{logistic.mm.aireml()} is called via the \c
 In such a case, \code{PVEnei} below is given by the variance component parameter \eqn{\sigma} (i.e., not a proportional value) and p-values are not provided.
 }
 \examples{
-set.seed(1)
+set.seed(1234)
 data("fake.f2",package="qtl")
 fake_f2 <- qtl2::convert2cross2(fake.f2)
 fake_f2 <- subset(fake_f2,chr=c(1:19))
 smap_f2 <- cbind(runif(qtl2::n_ind(fake_f2),1,100),runif(qtl2::n_ind(fake_f2),1,100))
-gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=1)
-genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2,error_prob=0.002)
-
-s_seq <- quantile(dist(smap_f2),c(0.2*(1:5)))
-pve_f2_1 <- calc_pve(genoprobs=genoprobs_f2,
-                     pheno=fake_f2$pheno[,1],
-                     gmap=gmap_f2,smap=smap_f2,
-                     s_seq=s_seq,
-                     addcovar=as.matrix(fake_f2$covar)
-                     )
+gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=2)
+genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2)
+s_seq <- quantile(dist(smap_f2),c(0.1*(1:10)))
+pve_f2 <- calc_pve(genoprobs=genoprobs_f2,
+                   pheno=fake_f2$pheno[,1], gmap=gmap_f2,
+                   smap=smap_f2, s_seq=s_seq,
+                   contrasts=c(TRUE,TRUE,TRUE),
+                   addcovar=as.matrix(fake_f2$covar)
+                   )
 }
 \references{
 \itemize{

@@ -3,6 +3,7 @@
 export(calc_neiprob)
 export(calc_pve)
 export(eff_neighbor)
+export(int_neighbor)
 export(min_dist)
 export(perm_neighbor)
 export(plot_nei)

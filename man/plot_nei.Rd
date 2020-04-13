@@ -2,14 +2,14 @@
 % Please edit documentation in R/plot_nei.R
 \name{plot_nei}
 \alias{plot_nei}
-\title{Plot a genome scan for self or neighbor QTL effect}
+\title{Plot LOD score for self or neighbor QTL effects}
 \usage{
 plot_nei(res, type = "neighbor", chr = NULL, th = NULL, ...)
 }
 \arguments{
 \item{res}{Output results of \code{scan_neighbor()}.}
 
-\item{type}{Plot \code{"self"} or \code{"neighbor"} effects. Default is \code{"neighbor"} effects.}
+\item{type}{Plot \code{"self"}, \code{"neighbor"} or \code{"int"} effects. Default is \code{"neighbor"} effects.}
 
 \item{chr}{An optional vector to select chromosome numbers to be plotted. If \code{NULL}, shown are all chromosomes.}
 
@@ -20,8 +20,12 @@ plot_nei(res, type = "neighbor", chr = NULL, th = NULL, ...)
 \description{
 Plot LOD curves for a genome scan of self and neighbor QTL effects
 }
+\details{
+For the \code{type} argument, \code{"int"} can be selected to draw the results of \code{int_neighbor()}.
+In this case, the \code{res} object and \code{type} must match, otherwise it returns an warning message.
+}
 \seealso{
-scan_neighbor perm_neighbor
+scan_neighbor int_neighbor perm_neighbor
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

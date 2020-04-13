@@ -9,14 +9,14 @@ decompose_genoprobs(genoprobs, contrasts = c(TRUE, TRUE, TRUE))
 \arguments{
 \item{genoprobs}{Conditional genotype probabilities as obtained from \code{qtl2::calc_genoprob()}.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(T/F, T/F, T/F) = AA, AB, BB.}
+\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 }
 \value{
 A list of three numeric matrices for genotype probabilities AA, AB, and BB. Each contains elements of individuals x markers.
 \itemize{
 \item{\code{AA}} {Homozygote AA probabilities.}
 \item{\code{AB}} {Heterozygote AB probabilities for. NA if inbred lines}
-\item{\code{BB}} {Homozygote BB probabilities. NA if backcrossed lines}
+\item{\code{BB}} {Homozygote BB probabilities. NA if backcross lines}
 }
 }
 \description{

@@ -17,7 +17,7 @@ selfprob(i, a1, d1, AA, AB, BB)
 
 \item{AB}{An individual x marker matrix of conditional probabilities for AB genotype. Input NA if heterozygotes are absent.}
 
-\item{BB}{An individual x marker matrix of conditional probabilities for BB genotype. Input NA for backcrossing.}
+\item{BB}{An individual x marker matrix of conditional probabilities for BB genotype. Input NA for backcross lines.}
 }
 \value{
 A numeric vector containing each marker effect for individual i.

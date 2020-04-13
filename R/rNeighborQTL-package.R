@@ -7,7 +7,7 @@
 #' @name rNeighborQTL-package
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 #' @details
-#' Neighbor QTL is an extended method of single-marker regression as proposed by Sato et al. (2019).
+#' Neighbor QTL is an extended method of single-marker regressions as proposed by Sato et al. (2019).
 #' Taking conditional genotype probabilities from \code{r/qtl2} package, the \code{rNeighborQTL} package performs an interval mapping of neighbor genotypic identity.
 #' @references
 #' Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2019) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory on *Arabidopsis thaliana*. bioRxiv https://doi.org/10.1101/845735

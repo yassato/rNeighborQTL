@@ -24,7 +24,7 @@ scan_neighbor(
 
 \item{gmap}{Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(T/F, T/F, T/F) = AA, AB, BB.}
+\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 
 \item{smap}{A matrix showing a spatial map. The first and second column include spatial points along a x-axis and y-axis, respectively.}
 
@@ -36,7 +36,7 @@ scan_neighbor(
 
 \item{grouping}{An optional integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
 
-\item{response}{An optional argument to select trait types. The \code{"quantitative"}, \code{"binary"}, or \code{"count"} calls the \code{"gaussian"}, \code{"binomial"}, or \code{"poisson"} family in \code{glm()}, respectively.}
+\item{response}{An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} calls the \code{"gaussian"} or \code{"binomial"} family in \code{glm()}, respectively.}
 }
 \value{
 A matrix of LOD scores for self and neighbor effects, with the chromosome numbers and positions. The row names correspond to marker names.
@@ -51,39 +51,19 @@ A matrix of LOD scores for self and neighbor effects, with the chromosome number
 Genome scan with a QTL model by Haley-Knott regression for self and neighbor effects, with possible allowance for additional covariates and non-normal traits.
 }
 \examples{
-#demo using F2
-set.seed(1)
+set.seed(1234)
 data("fake.f2",package="qtl")
 fake_f2 <- qtl2::convert2cross2(fake.f2)
 fake_f2 <- subset(fake_f2,chr=c(1:19))
 smap_f2 <- cbind(runif(qtl2::n_ind(fake_f2),1,100),runif(qtl2::n_ind(fake_f2),1,100))
-gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=1)
-genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2,error_prob=0.002)
-
+gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=2)
+genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2)
+s_seq <- quantile(dist(smap_f2),c(0.1*(1:10)))
 scan_f2 <- scan_neighbor(genoprobs=genoprobs_f2,
-                           pheno=fake_f2$pheno[,1],
-                           gmap=gmap_f2, smap=smap_f2,
-                           scale=20, addcovar=as.matrix(fake_f2$covar)
-                           )
+                         pheno=fake_f2$pheno[,1], gmap=gmap_f2,
+                         contrasts = c(TRUE,TRUE,TRUE), smap=smap_f2,
+                         scale=19.37, addcovar=as.matrix(fake_f2$covar))
 plot_nei(scan_f2)
-
-#demo using backgross lines
-set.seed(2)
-data("fake.bc",package="qtl")
-fake_bc <- qtl2::convert2cross2(fake.bc)
-fake_bc <- subset(fake_bc,chr=c(1:9))
-smap_bc <- cbind(runif(qtl2::n_ind(fake_bc),1,100),
-                 runif(qtl2::n_ind(fake_bc),1,100)
-                 )
-gmap_bc <- qtl2::insert_pseudomarkers(fake_bc$gmap, step=1)
-genoprobs_bc <- qtl2::calc_genoprob(fake_bc,gmap_bc,error_prob=0.002)
-scan_bc <- scan_neighbor(genoprobs=genoprobs_bc,
-                         pheno=fake_bc$pheno[,1],
-                         gmap=gmap_bc, contrasts=c(TRUE,TRUE,FALSE),
-                         smap=smap_bc, scale=59,
-                         addcovar=as.matrix(fake_bc$covar)
-)
-plot_nei(scan_bc)
 }
 \references{
 \itemize{

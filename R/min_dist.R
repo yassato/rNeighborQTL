@@ -7,11 +7,11 @@
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 #' @export
 min_dist = function(smap, grouping = rep(1,nrow(smap))) {
-  min_d_i = c()
+  min_d_i <- c()
   for(i in 1:nrow(smap)) {
-    id = c(1:nrow(smap))[grouping==grouping[i]]
-    d_i = mapply(function(x) { return(sqrt((smap[x,1]-smap[i,1])^2 + (smap[x,2]-smap[i,2])^2)) },id)
-    min_d_i = c(min_d_i, min(d_i[d_i!=0]))
+    id <- c(1:nrow(smap))[grouping==grouping[i]]
+    d_i <- mapply(function(x) { return(sqrt((smap[x,1]-smap[i,1])^2 + (smap[x,2]-smap[i,2])^2)) },id)
+    min_d_i <- c(min_d_i, min(d_i[d_i!=0]))
   }
-  return(max(min_d_i))
+  return(max(min_d_i)[1])
 }

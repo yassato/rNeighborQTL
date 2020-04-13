@@ -6,18 +6,19 @@
 #' @seealso eff_neighbor
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 plot_eff = function(res, type="neighbor") {
-  x = cumsum(res$pos)
+  x <- cumsum(res$pos)
 
   if(type=="neighbor") {
-    a = res$a2
-    d = res$d2
+    a <- res$a2
+    d <- res$d2
   } else if(type=="self") {
-    a = res$a1
-    d = res$d1
+    a <- res$a1
+    d <- res$d1
   } else {
-    a = NULL
-    d = NULL
-    print("error: type must be 'self' or 'neighbor'")
+    a <- NULL
+    d <- NULL
+    warning("error: type must be 'self' or 'neighbor'")
+    return(NULL)
   }
 
   graphics::plot(x, (abs(a)+abs(d)), type="n", xlab="", las=1, ylim=c(range(c(stats::na.omit(a),stats::na.omit(d)))),xaxt="n", yaxt="s", main=paste(type,", a:solid; ","d:dashed"), ylab="QTL effect")

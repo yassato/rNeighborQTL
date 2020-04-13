@@ -10,7 +10,7 @@ The "rNeighborQTL" package provides a set of functions to perform a genome scan 
 See \code{vignette("rNeighborQTL")} for how to use this package.
 }
 \details{
-Neighbor QTL is an extended method of single-marker regression as proposed by Sato et al. (2019).
+Neighbor QTL is an extended method of single-marker regressions as proposed by Sato et al. (2019).
 Taking conditional genotype probabilities from \code{r/qtl2} package, the \code{rNeighborQTL} package performs an interval mapping of neighbor genotypic identity.
 }
 \references{
