@@ -11,7 +11,7 @@
 #' @param addQTL An optional vector containing marker names that are considered covariates. Namely, this option allows composite interval mapping (Jansen 1993).
 #' @param grouping An optional integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.
 #' @param response An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} calls the \code{"gaussian"} or \code{"binomial"} family in \code{glm()}, respectively.
-#' @return  A matrix of LOD scores for self and neighbor effects, with the chromosome numbers and positions. The row names correspond to marker names.
+#' @return A matrix of LOD scores for self and neighbor effects, with the chromosome numbers and positions. The row names correspond to marker names.
 #' \itemize{
 #'  \item{\code{chr}} {Chromosome number}
 #'  \item{\code{pos}} {Marker position}
@@ -19,6 +19,9 @@
 #'  \item{\code{LOD_nei}} {LOD score for neighbor effects}
 #' }
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
+#' @details
+#' This function adopts a stepwise testing from self to neighbor effects; thus, \code{LOD_self} gives the same results as standard QTL mapping.
+#' Note that the results return 0 LOD scores for covariate markers when using \code{addQTL} option.
 #' @references
 #' * Haley CS, Knott SA (1992) A simple regression method for mapping quantitative trait loci in line crosses using flanking markers. Heredity 69:315-324.
 #' * Jansen RC (1993) Interval mapping of multiple quantitative trait loci. Genetics 135:205-211.
@@ -42,7 +45,7 @@ scan_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sm
   switch(response,
          "quantitative" = glm_family <- "gaussian",
          "binary" = glm_family <- "binomial",
-         return(warning("error: response must be 'quantitative' or 'binary'"))
+         stop("error: response must be 'quantitative' or 'binary'")
   )
 
   p <- dim(genoprobs[[1]])[1]
@@ -55,17 +58,22 @@ scan_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sm
   y_self_hat <- c()
   for(i in 1:p) y_self_hat <- rbind(y_self_hat, selfprob(i, a1=scan_effect$a1, d1=scan_effect$d1, AA=geno$AA, AB=geno$AB, BB=geno$BB))
 
-  neiprob_i <- function(i) {
-    id <- c(1:p)[grouping == grouping[i]]
+  neiprob_i = function(i) {
+    id = c(1:p)[grouping == grouping[i]]
 
-    d_i <- mapply(function(x) { return(sqrt((smap[x,1]-smap[i,1])^2 + (smap[x,2]-smap[i,2])^2)) },id)
-    prob_i <- 0
-    for(j in id[(d_i>0)&(d_i<scale)]){
-      prob_ij <- neiprob(i=i, j=j, a2=scan_effect$a2, d2=scan_effect$d2, AA=geno$AA, AB=geno$AB, BB=geno$BB)
-      prob_i <- prob_i + prob_ij
+    d_i = mapply(function(x) { return(sqrt((smap[x,1]-smap[i,1])^2 + (smap[x,2]-smap[i,2])^2)) },id)
+    prob_i = 0
+    j_id = id[(d_i>0)&(d_i<=scale)]
+    if(length(j_id)==0) {
+      return(rep(0,ncol(geno$AA)))
+    } else {
+      for(j in j_id){
+        prob_ij = neiprob(i=i, j=j, a2=scan_effect$a2, d2=scan_effect$d2, AA=geno$AA, AB=geno$AB, BB=geno$BB)
+        prob_i = prob_i + prob_ij
+      }
+      prob_i = prob_i/length(j_id)
+      return(prob_i)
     }
-    prob_i <- prob_i/length(id[(d_i>0)&(d_i<scale)])
-    return(prob_i)
   }
 
   y_nei_hat <- mapply(neiprob_i, 1:p)

@@ -38,21 +38,6 @@ A numeric matrix containing individuals x marker elements for neighbor QTL effec
 \description{
 A function to calculate self QTL effects for all individuals, with given deviation coefficients and conditional genotype probabilities.
 }
-\examples{
-set.seed(1234)
-data("fake.f2",package="qtl")
-fake_f2 <- qtl2::convert2cross2(fake.f2)
-fake_f2 <- subset(fake_f2,chr=c(1:19))
-smap_f2 <- cbind(runif(qtl2::n_ind(fake_f2),1,100),runif(qtl2::n_ind(fake_f2),1,100))
-gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=2)
-genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2)
-
-neiprobs <- calc_neiprob(genoprobs=genoprobs_f2,
-                         gmap=gmap_f2, a2=1, d2=0,
-                         smap=smap_f2, scale=20,
-                         grouping=fake_f2$covar$pgm
-                         )
-}
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 }

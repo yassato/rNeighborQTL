@@ -50,6 +50,10 @@ A matrix of LOD scores for self and neighbor effects, with the chromosome number
 \description{
 Genome scan with a QTL model by Haley-Knott regression for self and neighbor effects, with possible allowance for additional covariates and non-normal traits.
 }
+\details{
+This function adopts a stepwise testing from self to neighbor effects; thus, \code{LOD_self} gives the same results as standard QTL mapping.
+Note that the results return 0 LOD scores for covariate markers when using \code{addQTL} option.
+}
 \examples{
 set.seed(1234)
 data("fake.f2",package="qtl")

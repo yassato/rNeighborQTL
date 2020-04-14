@@ -44,22 +44,22 @@ eff_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sma
   switch(response,
          "quantitative" = glm_family <- "gaussian",
          "binary" = glm_family <- "binomial",
-         return(warning("error: response must be 'quantitative' or 'binary'"))
+         stop("error: response must be 'quantitative' or 'binary'")
   )
 
   self_k = function(k) {
     if(is.null(X)==TRUE) {
-      res <- stats::glm(pheno~selfprobs[,k]-1, family=glm_family)
+      res <- stats::glm(pheno~selfprobs[,k], family=glm_family)
       coef <- res$coef[length(res$coef)]
     } else {
-      res <- try(stats::glm(pheno~X+selfprobs[,k]-1, family=glm_family))
+      res <- try(stats::glm(pheno~X+selfprobs[,k], family=glm_family))
       if(is.na(res$coef[length(res$coef)])!=TRUE) {
         coef <- res$coef[length(res$coef)]
       } else {
         if(is.null(addcovar)==TRUE) {
-          res <- stats::glm(pheno~selfprobs[,k]-1, family=glm_family)
+          res <- stats::glm(pheno~selfprobs[,k], family=glm_family)
         } else {
-          res <- stats::glm(pheno~addcovar+selfprobs[,k]-1, family=glm_family)
+          res <- stats::glm(pheno~addcovar+selfprobs[,k], family=glm_family)
         }
         coef <- res$coef[length(res$coef)]
       }
@@ -95,17 +95,17 @@ eff_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sma
   selfprobs <- genoprobs2selfprobs(genoprobs=genoprobs, gmap=gmap, a1=a1, d1=d1, contrasts=contrasts)
   nei_k <- function(k) {
     if(is.null(X)==TRUE) {
-      res <- stats::glm(pheno~selfprobs[,k]+neiprobs[,k]-1, family=glm_family)
+      res <- stats::glm(pheno~selfprobs[,k]+neiprobs[,k], family=glm_family)
       coef <- res$coef[length(res$coef)]
     } else {
-      res <- try(stats::glm(pheno~X+selfprobs[,k]+neiprobs[,k]-1, family=glm_family))
+      res <- try(stats::glm(pheno~X+selfprobs[,k]+neiprobs[,k], family=glm_family))
       if(is.na(res$coef[length(res$coef)])!=TRUE) {
         coef <- res$coef[length(res$coef)]
       } else {
         if(is.null(addcovar)==TRUE) {
-          res <- stats::glm(pheno~selfprobs[,k]+neiprobs[,k]-1, family=glm_family)
+          res <- stats::glm(pheno~selfprobs[,k]+neiprobs[,k], family=glm_family)
         } else {
-          res <- stats::glm(pheno~addcovar+selfprobs[,k]+neiprobs[,k]-1, family=glm_family)
+          res <- stats::glm(pheno~addcovar+selfprobs[,k]+neiprobs[,k], family=glm_family)
         }
         coef <- res$coef[length(res$coef)]
       }

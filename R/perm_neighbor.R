@@ -45,8 +45,7 @@ perm_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sm
   } else if(type=="int") {
     func = function(x) return(max(int_neighbor(genoprobs=genoprobs, pheno=sample(pheno), gmap=gmap, smap=smap, scale=scale, contrasts=contrasts, addcovar=addcovar, addQTL=addQTL, intQTL=intQTL, grouping=grouping, response=response)$LOD_int))
   } else {
-    warning("error: type must be 'self', 'neighbor', or 'int'")
-    return(NULL)
+    stop("error: type must be 'self', 'neighbor', or 'int'")
   }
 
   res = parallel::mcmapply(func, 1:times, mc.cores=getOption("mc.cores",n_core))

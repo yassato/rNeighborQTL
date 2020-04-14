@@ -46,7 +46,7 @@ calc_pve = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), smap, s
 
   res <- c()
   for(s in s_seq) {
-    if(class(s)=="numeric") { cat("scale =", round(s,3), "\n") }
+    if(class(s)=="numeric") { message("scale = ", round(s,3), "\n") }
 
     selfprobs <- genoprobs2selfprobs(genoprobs=genoprobs, gmap=gmap, a1=1, d1=0, contrasts=contrasts)
     neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=0, grouping=grouping)
@@ -75,8 +75,7 @@ calc_pve = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), smap, s
       pve <- aireml$tau[2]
       p_val <- NA
     } else {
-      warning("error: reponse must be 'quantitative' or 'binary'")
-      return(NULL)
+      stop("error: reponse must be 'quantitative' or 'binary'")
     }
     res <- rbind(res, c(s, pve, p_val))
   }

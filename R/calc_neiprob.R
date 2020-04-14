@@ -11,21 +11,6 @@
 #' @param grouping An integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.
 #' @return A numeric matrix containing individuals x marker elements for neighbor QTL effects.
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
-#' @examples
-#' set.seed(1234)
-#' data("fake.f2",package="qtl")
-#' fake_f2 <- qtl2::convert2cross2(fake.f2)
-#' fake_f2 <- subset(fake_f2,chr=c(1:19))
-#' smap_f2 <- cbind(runif(qtl2::n_ind(fake_f2),1,100),runif(qtl2::n_ind(fake_f2),1,100))
-#' gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=2)
-#' genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2)
-#'
-#' neiprobs <- calc_neiprob(genoprobs=genoprobs_f2,
-#'                          gmap=gmap_f2, a2=1, d2=0,
-#'                          smap=smap_f2, scale=20,
-#'                          grouping=fake_f2$covar$pgm
-#'                          )
-#' @export
 calc_neiprob = function(genoprobs, gmap, a2, d2, contrasts=c(TRUE,TRUE,TRUE), smap, scale, grouping=rep(1,nrow(smap))) {
   p <- dim(genoprobs[[1]])[1]
   geno <- decompose_genoprobs(genoprobs=genoprobs, contrasts=contrasts)

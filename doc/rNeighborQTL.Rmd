@@ -30,23 +30,14 @@ gmap_colkas <- qtl2::insert_pseudomarkers(colkas$gmap, step=2)
 colkas_genoprob <- qtl2::calc_genoprob(colkas,gmap_colkas)
 ```
 
-## Neighbor genotypic identity
-<p>Then, we import the "rNeighborQTL" package and see how to test neighbor effects. Based on the self-genotype probabilities, we can calculate neighbor genotypic identity with given effects of additive and dominance deviation $a_2$ and $d_2$ at a given spatial scale $s$.</p> 
-```{r neiprob}
+## Proportion of variation explained by neighbor effects
+<p>Prior to the genome scan, we estimate the 'scale' argument. The "calc_pve()" computes proportion of phenotypic variation (PVE) by neighbor effects for a series of spatial scales. Based on the PVE, we calculate $\Delta$PVE metric and seek the scale $s$ that gives an argument for the maximum of $\Delta$PVE.</p>
+```{r pve}
 library(rNeighborQTL)
 x <- colkas$pheno[,2]
 y <- colkas$pheno[,3]
 smap_colkas <- data.frame(x,y)
 
-colkas_neiprob <- calc_neiprob(genoprobs=colkas_genoprob,
-                              gmap=gmap_colkas, contrasts=c(TRUE,FALSE,TRUE),
-                              smap=smap_colkas, scale=33,
-                              a2=1, d2=0)
-```
-
-## Proportion of variation explained by neighbor effects
-<p>Prior to the genome scan, we estimate the 'scale' argument. The "calc_pve()" computes proportion of phenotypic variation (PVE) by neighbor effects for a series of spatial scales. Based on the PVE, we calculate $\Delta$PVE metric and seek the scale $s$ that gives an argument for the maximum of $\Delta$PVE.</p>
-```{r pve}
 s_seq <- quantile(dist(smap_colkas),c(0.1*(1:10)))
 colkas_pve <- calc_pve(genoprobs=colkas_genoprob,
                       pheno=log(colkas$pheno[,4]+1),
@@ -56,8 +47,8 @@ colkas_pve <- calc_pve(genoprobs=colkas_genoprob,
                       )
 ```
 
-## QTL effects
-<p>The deviation coefficients $a_2$ and $d_2$ are estimated using a linear regression on the genotype probabilities, also known as Haley-Knott regression (Haley & Knott 1992). The "eff_neighbor()" estimates the coefficients for self and neighbor effects, and plots the results as follows.</p>
+## Estimation of QTL effects
+<p>Then, the deviation coefficients $a_2$ and $d_2$ are estimated using a linear regression on the genotype probabilities, also known as Haley-Knott regression (Haley & Knott 1992). The "eff_neighbor()" estimates the coefficients for self and neighbor effects, and plots the results as follows.</p>
 ```{r eff, fig.width=4, fig.height=8}
 colkas_eff <- eff_neighbor(genoprobs=colkas_genoprob,
                            pheno=log(colkas$pheno[,4]+1),
@@ -84,7 +75,7 @@ colkas_perm <- perm_neighbor(genoprobs=colkas_genoprob, pheno=log(colkas$pheno[,
                             gmap=gmap_colkas, contrasts=c(TRUE,FALSE,TRUE),
                             smap=smap_colkas, scale=7,
                             addcovar=colkas$pheno[,6:8],
-                            times=9, p_val=c(0.1,0.05,0.01))
+                            times=99, p_val=c(0.1,0.05,0.01))
 print(colkas_perm)
 ```
 

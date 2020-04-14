@@ -24,12 +24,11 @@ plot_nei = function(res, type="neighbor", chr=NULL, th=NULL, ...) {
          "self" = y <- res$LOD_self,
          "neighbor" = y <- res$LOD_nei,
          "int" = y <- res$LOD_int,
-         return(warning("error: type must be 'self', 'neighbor', or 'int'"))
+         stop("error: type must be 'self', 'neighbor', or 'int'")
   )
 
   if(is.null(y)) {
-    warning("error: the output results and type does not match")
-    return(NULL)
+    stop("error: the output results and type does not match")
     }
 
   args <- list(...)

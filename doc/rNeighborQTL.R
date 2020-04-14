@@ -14,18 +14,12 @@ colkas <- qtl2::convert2cross2(colkas)
 gmap_colkas <- qtl2::insert_pseudomarkers(colkas$gmap, step=2)
 colkas_genoprob <- qtl2::calc_genoprob(colkas,gmap_colkas)
 
-## ----neiprob------------------------------------------------------------------
+## ----pve----------------------------------------------------------------------
 library(rNeighborQTL)
 x <- colkas$pheno[,2]
 y <- colkas$pheno[,3]
 smap_colkas <- data.frame(x,y)
 
-colkas_neiprob <- calc_neiprob(genoprobs=colkas_genoprob,
-                              gmap=gmap_colkas, contrasts=c(TRUE,FALSE,TRUE),
-                              smap=smap_colkas, scale=33,
-                              a2=1, d2=0)
-
-## ----pve----------------------------------------------------------------------
 s_seq <- quantile(dist(smap_colkas),c(0.1*(1:10)))
 colkas_pve <- calc_pve(genoprobs=colkas_genoprob,
                       pheno=log(colkas$pheno[,4]+1),
@@ -56,7 +50,7 @@ colkas_perm <- perm_neighbor(genoprobs=colkas_genoprob, pheno=log(colkas$pheno[,
                             gmap=gmap_colkas, contrasts=c(TRUE,FALSE,TRUE),
                             smap=smap_colkas, scale=7,
                             addcovar=colkas$pheno[,6:8],
-                            times=9, p_val=c(0.1,0.05,0.01))
+                            times=99, p_val=c(0.1,0.05,0.01))
 print(colkas_perm)
 
 ## ----self---------------------------------------------------------------------

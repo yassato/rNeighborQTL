@@ -14,6 +14,10 @@ decompose_genoprobs = function(genoprobs, contrasts=c(TRUE,TRUE,TRUE)) {
   p <- dim(genoprobs[[1]])[1]
   r <- dim(genoprobs[[1]])[2]
 
+  if(r!=sum(contrasts)) {
+    stop("error: allele dimension does not match!")
+  }
+
   geno <- c()
   AA <- c(); AB <- c(); BB <- c()
 
