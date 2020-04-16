@@ -52,7 +52,7 @@ A function to calculate PVE by neighbor effects for a series of neighbor distanc
 \details{
 This function uses mixed models via the \code{gaston} package (Perdry & Dandine-Roulland 2020).
 If \code{"binary"} is selected, \code{logistic.mm.aireml()} is called via the \code{gaston} package (see Chen et al. 2016 for the theory).
-In such a case, \code{PVEnei} below is given by the variance component parameter \eqn{\sigma} (i.e., not a proportional value) and p-values are not provided.
+In such a case, \code{PVEnei} below is replaced by the ratio of variance component parameter \eqn{\sigma^2_2/\sigma^2_1} and p-values are not provided.
 }
 \examples{
 set.seed(1234)
