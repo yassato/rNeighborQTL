@@ -21,7 +21,7 @@
 #' @details
 #' This function uses mixed models via the \code{gaston} package (Perdry & Dandine-Roulland 2020).
 #' If \code{"binary"} is selected, \code{logistic.mm.aireml()} is called via the \code{gaston} package (see Chen et al. 2016 for the theory).
-#' In such a case, \code{PVEnei} below is given by the variance component parameter \eqn{\sigma} (i.e., not a proportional value) and p-values are not provided.
+#' In such a case, \code{PVEnei} below is replaced by the ratio of variance component parameter \eqn{\sigma^2_2/\sigma^2_1} and p-values are not provided.
 #' @references
 #' * Perdry H, Dandine-Roulland C (2019) gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.5. https://CRAN.R-project.org/package=gaston
 #' * Chen H, Wang C, Conomos M. et al. (2016) Control for population structure and relatedness for binary traits in genetic association studies via logistic mixed models. The American Journal of Human Genetics 98: 653-666.
@@ -72,19 +72,25 @@ calc_pve = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), smap, s
       p_val <- stats::pchisq(-2*(aireml1$logL-aireml2$logL), df=1, lower.tail=FALSE)
     } else if(response=="binary"){
       aireml <- gaston::logistic.mm.aireml(Y=pheno, X=X, K=list(K_self, K_nei), verbose=FALSE)
-      pve <- aireml$tau[2]
+      pve <- aireml$tau[2]/aireml$tau[1]
       p_val <- NA
     } else {
       stop("error: reponse must be 'quantitative' or 'binary'")
     }
     res <- rbind(res, c(s, pve, p_val))
   }
-  colnames(res) <- c("scale","PVE_nei", "p-value")
+  colnames(res) <- c("scale", "PVE_nei", "p-value")
 
   if(fig==TRUE) {
     PVE <- res[,2]
     deltaPVE <- PVE - c(0, PVE[1:(length(PVE)-1)])
-    graphics::plot(s_seq, deltaPVE, type="l", xlab="spatial scale")
+
+    switch(response,
+           "quantitative" = ylab <- "deltaPVE",
+           "binary" = ylab <- "delta[sigma^2_2/sigma^2_1]"
+    )
+
+    graphics::plot(s_seq, deltaPVE, type="l", xlab="spatial scale", ylab=ylab)
     graphics::points(s_seq, deltaPVE)
     max(deltaPVE)
     s_seq[deltaPVE==max(deltaPVE)]
