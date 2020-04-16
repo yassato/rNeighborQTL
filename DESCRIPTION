@@ -4,7 +4,7 @@ Version: 1.0.0
 Authors@R: c(
     person(given = "Yasuhiro", family = "Sato", role = c("aut", "cre"), email = "sato.yasuhiro.36c@kyoto-u.jp", comment = c(ORCID = "0000-0002-6466-723X")),
 	person(given = "Kazuya", family = "Takeda", role = "aut"),
-    person(given = "Atsushi J.", family = "Nagano", role = "aut", email = "anagano@agr.ryukoku.ac.jp", comment = c(ORCID = "0000-0001-7891-5049")
+    person(given = "Atsushi J.", family = "Nagano", role = "aut", email = "anagano@agr.ryukoku.ac.jp", comment = c(ORCID = "0000-0001-7891-5049"))
 	)		   
 Description: To enable quantitative trait loci mapping of neighbor effects, this package extends a single-marker regression to interval mapping.
 License: GPL-3
