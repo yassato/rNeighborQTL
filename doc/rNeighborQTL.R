@@ -22,11 +22,11 @@ smap_colkas <- data.frame(x,y)
 
 s_seq <- quantile(dist(smap_colkas),c(0.1*(1:10)))
 colkas_pve <- calc_pve(genoprobs=colkas_genoprob,
-                      pheno=log(colkas$pheno[,4]+1),
-                      gmap=gmap_colkas, contrasts=c(TRUE,FALSE,TRUE),
-                      addcovar=colkas$pheno[,6:8], 
-                      smap=smap_colkas, s_seq=s_seq
-                      )
+                       pheno=log(colkas$pheno[,4]+1),
+                       gmap=gmap_colkas, contrasts=c(TRUE,FALSE,TRUE),
+                       addcovar=colkas$pheno[,6:8], 
+                       smap=smap_colkas, s_seq=s_seq
+                       )
 
 ## ----eff, fig.width=4, fig.height=8-------------------------------------------
 colkas_eff <- eff_neighbor(genoprobs=colkas_genoprob,
@@ -55,7 +55,7 @@ print(colkas_perm)
 
 ## ----self---------------------------------------------------------------------
 plot_nei(colkas_scan, type="self")
-colkas_scan1 <- qtl2::scan1(colkas_genoprob,pheno=colkas$pheno[,2])
+colkas_scan1 <- qtl2::scan1(colkas_genoprob,pheno=log(colkas$pheno[,4]+1),addcovar=colkas$pheno[,6:8])
 plot(colkas_scan1, map=gmap_colkas)
 
 ## ----CIM----------------------------------------------------------------------
@@ -77,21 +77,21 @@ colkas_int <- int_neighbor(genoprobs=colkas_genoprob,
                            )
 plot_nei(colkas_int, type="int")
 
-## ----bin, fig.width=4, fig.height=8-------------------------------------------
+## ----bin----------------------------------------------------------------------
 s_seq <- quantile(dist(smap_colkas),c(0.1*(1:10)))
-colkas_pveBin <- calc_pve(genoprobs=colkas_genoprob, pheno=colkas$pheno[,5],
-                       contrasts=c(TRUE,FALSE,TRUE), addcovar=NULL,
-                       gmap=gmap_colkas, smap=smap_colkas,
-                       s_seq=s_seq, response="binary", fig=FALSE
+colkas_pveBin <- calc_pve(genoprobs=colkas_genoprob, pheno=colkas$pheno[,6],
+                       gmap=gmap_colkas, contrasts=c(TRUE,FALSE,TRUE),
+                       smap=smap_colkas, s_seq=s_seq,
+                       response="binary", addcovar=colkas$pheno[,7:8], fig=TRUE
                        )
 
-colkas_scanBin <- scan_neighbor(genoprobs=colkas_genoprob, pheno=colkas$pheno[,5],
+colkas_scanBin <- scan_neighbor(genoprobs=colkas_genoprob, pheno=colkas$pheno[,6],
                                 gmap=gmap_colkas, contrasts=c(TRUE,FALSE,TRUE),
-                                smap_colkas, scale=7.82, response="binary")
+                                smap_colkas, scale=2.24,
+                                addcovar=colkas$pheno[,7:8], response="binary"
+                                )
 
-par(mfcol=c(2,1))
-plot_nei(colkas_scanBin,type="self")
-plot_nei(colkas_scanBin,type="neighbor")
+plot_nei(colkas_scanBin)
 
 ## ----fake---------------------------------------------------------------------
 #demo using F2
