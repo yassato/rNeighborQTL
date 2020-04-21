@@ -6,7 +6,7 @@ The rNeighborQTL package has not been registered in CRAN yet.
 Please install it via GitHub by running *devtools::install_github("yassato/rNeighborQTL")*.  
 
 ## Dependency
-Please note that the rNeighborQTL requires the following R packages.  
+Note that the rNeighborQTL requires the following R packages.  
 - gaston
 - parallel
 - qtl
