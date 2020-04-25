@@ -53,7 +53,7 @@ A matrix of estimated additive and dominance deviation for self and neighbor eff
 }
 }
 \description{
-A function to estimate additive and dominance deviation for self and neighbor QTL effects by Haley-Knott regression
+A function to estimate additive and dominance deviation for self and neighbor QTL effects by stepwise Haley-Knott regressions.
 }
 \examples{
 set.seed(1234)

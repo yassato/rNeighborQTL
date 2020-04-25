@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_pve.R
 \name{calc_pve}
 \alias{calc_pve}
-\title{Calculating proportion of phenotypic variation explained (PVE) by neighbor effects}
+\title{Calculating phenotypic variation explained by neighbor effects}
 \usage{
 calc_pve(
   genoprobs,
@@ -36,23 +36,24 @@ calc_pve(
 
 \item{response}{An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} applies the \code{"lmm.aireml()"} or \code{"logistic.mm.aireml()"} for a mixed model, respectively.}
 
-\item{fig}{TRUE/FALSE to add a figure of PVE or not.}
+\item{fig}{TRUE/FALSE to add a figure of Delta PVE or not.}
 }
 \value{
-A matrix containing the maximum neighbor distance, PVE by neighbor effects, and p-value by LRT.
+A matrix containing the maximum neighbor distance, phenotypic variation explained by neighbor effects, and p-value by LRT.
 \itemize{
 \item{\code{scale}} {Maximum neighbor distance given as an argument}
-\item{\code{PVE_nei}} {Proportion of phenotypic variation explained (PVE) by neighbor effects}
+\item{\code{Var_nei}} {Proportion or ratio of phenotypic variation explained (PVE or RVE) by neighbor effects for linear or logistic mixed models, respectively}
 \item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects}
 }
 }
 \description{
-A function to calculate PVE by neighbor effects for a series of neighbor distance (\code{s_seq}) using a linear mixed model.
+A function to calculate the proportion or ratio of phenotypic variation explained (PVE or RVE) by neighbor effects for a series of neighbor distance (\code{s_seq}) using mixed models.
 }
 \details{
-This function uses mixed models via the \code{gaston} package (Perdry & Dandine-Roulland 2020).
-If \code{"binary"} is selected, \code{logistic.mm.aireml()} is called via the \code{gaston} package (see Chen et al. 2016 for the theory).
-In such a case, \code{PVEnei} below is replaced by the ratio of variance component parameter \eqn{\sigma^2_2/\sigma^2_1} and p-values are not provided.
+This function calls linear or logistic mixed models via the \code{gaston} package (Perdry & Dandine-Roulland 2020).
+If \code{"binary"} is selected, \code{Var_nei} in the output is given by the proportion of phenotypic variation explained (PVE) by neighbor effects as PVEnei =\eqn{\sigma^2_2/(\sigma^2_1+\sigma^2_2+\sigma^2_e)}.
+If \code{"binary"} is selected, \code{Var_nei} is given by the ratio of phenotypic variation explained (RVE) by neighbor effects as RVEnei =\eqn{\sigma^2_2/\sigma^2_1} and p-values are not available.
+This is because a logistic mixed model \code{logistic.mm.aireml()} called via the \code{gaston} package does not provide \eqn{\sigma^2_e} and log-likelihood (see Chen et al. 2016 for the theory).
 }
 \examples{
 set.seed(1234)

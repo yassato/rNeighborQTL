@@ -18,11 +18,11 @@ plot_nei(res, type = "neighbor", chr = NULL, th = NULL, ...)
 \item{...}{Arguments to be passed to \code{plot()}.}
 }
 \description{
-Plot LOD curves for a genome scan of self and neighbor QTL effects
+Plot LOD curves for a genome scan of self and neighbor QTL effects.
 }
 \details{
 For the \code{type} argument, \code{"int"} can be selected to draw the results of \code{int_neighbor()}.
-In this case, the \code{res} object and \code{type} must match, otherwise it returns an warning message.
+In this case, the \code{res} object and \code{type} must match, otherwise it returns an error message.
 }
 \seealso{
 scan_neighbor int_neighbor perm_neighbor

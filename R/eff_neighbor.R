@@ -1,6 +1,6 @@
 #' Estimation of self and neighbor QTL effects across a genome
 #'
-#' A function to estimate additive and dominance deviation for self and neighbor QTL effects by Haley-Knott regression
+#' A function to estimate additive and dominance deviation for self and neighbor QTL effects by stepwise Haley-Knott regressions.
 #' @param genoprobs Conditional genotype probabilities as obtained from \code{qtl2::calc_genoprob()}.
 #' @param pheno A vector of individual phenotypes.
 #' @param gmap Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.
@@ -12,7 +12,7 @@
 #' @param grouping An optional integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.
 #' @param response An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} calls the \code{"gaussian"} or \code{"binomial"} family in \code{glm()}, respectively.
 #' @param fig TRUE/FALSE to plot the effects or not.
-#' @return  A matrix of estimated additive and dominance deviation for self and neighbor effects, with the chromosome numbers and positions. The row names correspond to marker names.
+#' @return A matrix of estimated additive and dominance deviation for self and neighbor effects, with the chromosome numbers and positions. The row names correspond to marker names.
 #' \itemize{
 #'  \item{\code{chr}} {Chromosome number}
 #'  \item{\code{pos}} {Marker position}

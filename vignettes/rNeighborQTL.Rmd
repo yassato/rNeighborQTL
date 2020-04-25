@@ -115,7 +115,7 @@ plot_nei(colkas_int, type="int")
 ```
 
 ### *4. Binary traits*
-<p>The "response" argument allows us to analyze "binary" phenotypes as well as "quantitative" traits. This argument calls logistic (mixed) models internally (Faraway 2016; Chen et al. 2016). The "calc_pve()" yields $\sigma^2_2/\sigma^2_1$ when "binary" traits are analyzed, because the logistic mixed model does not compute $\sigma^2_e$ (Perdry & Dandine-Roulland 2020). Here is an example for the analysis of the presence or absence of bolting in Col x Kas RILs.</p>
+<p>The "response" argument allows us to analyze "binary" phenotypes as well as "quantitative" traits. This argument calls logistic (mixed) models internally (Faraway 2016; Chen et al. 2016). The "calc_pve()" yields the ratio of phenotypic variation explained (RVE) by neighbor effects as RVE~nei~ =$\sigma^2_2/\sigma^2_1$ when "binary" traits are analyzed, because the logistic mixed model does not compute $\sigma^2_e$ (Perdry & Dandine-Roulland 2020). Here is an example for the analysis of the presence or absence of bolting in Col x Kas RILs.</p>
 ```{r bin}
 s_seq <- quantile(dist(smap_colkas),c(0.1*(1:10)))
 colkas_pveBin <- calc_pve(genoprobs=colkas_genoprob, pheno=colkas$pheno[,6],

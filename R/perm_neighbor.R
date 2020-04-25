@@ -16,7 +16,7 @@
 #' @param p_val A vector indicating upper quantiles for permutation LOD scores
 #' @param type Select \code{"self"}, \code{"neighbor"}, or \code{"int"} to perform permutation tests for self effects, neighbor effects, or neighbor epistasis, respectively.
 #' @param n_core No. of cores for a parallel computation. This does not work for Windows OS. Default is a single-core computation.
-#' @return  LOD thresholds at given quantiles by \code{p-val}
+#' @return LOD thresholds at given quantiles by \code{p-val}
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 #' @seealso plot_nei scan_neighbor int_neighbor
 #' @import parallel

@@ -1,6 +1,6 @@
 #' Plot LOD score for self or neighbor QTL effects
 #'
-#' Plot LOD curves for a genome scan of self and neighbor QTL effects
+#' Plot LOD curves for a genome scan of self and neighbor QTL effects.
 #' @param res Output results of \code{scan_neighbor()}.
 #' @param type Plot \code{"self"}, \code{"neighbor"} or \code{"int"} effects. Default is \code{"neighbor"} effects.
 #' @param chr An optional vector to select chromosome numbers to be plotted. If \code{NULL}, shown are all chromosomes.
@@ -9,7 +9,7 @@
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 #' @details
 #' For the \code{type} argument, \code{"int"} can be selected to draw the results of \code{int_neighbor()}.
-#' In this case, the \code{res} object and \code{type} must match, otherwise it returns an warning message.
+#' In this case, the \code{res} object and \code{type} must match, otherwise it returns an error message.
 #' @seealso scan_neighbor int_neighbor perm_neighbor
 #' @export
 plot_nei = function(res, type="neighbor", chr=NULL, th=NULL, ...) {
