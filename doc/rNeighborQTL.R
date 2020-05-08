@@ -103,18 +103,27 @@ smap_f2 <- cbind(runif(qtl2::n_ind(fake_f2),1,100),runif(qtl2::n_ind(fake_f2),1,
 gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=2)
 genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2)
 s_seq <- quantile(dist(smap_f2),c(0.1*(1:10)))
+
+nei_eff <- sim_nei_qtl(genoprobs_f2, gmap_f2, a2=0.5, d2=0.5, 
+                       contrasts=c(TRUE,TRUE,TRUE), smap=smap_f2, 
+                       scale=s_seq[1], n_QTL=1)
+
 pve_f2 <- calc_pve(genoprobs=genoprobs_f2,
-                     pheno=fake_f2$pheno[,1], gmap=gmap_f2,
-                     smap=smap_f2, s_seq=s_seq,
-                     contrasts=c(TRUE,TRUE,TRUE),
-                     addcovar=as.matrix(fake_f2$covar), fig=FALSE
-                     )
+                       pheno=nei_eff$nei_y,
+                       gmap=gmap_f2, contrasts=c(TRUE,TRUE,TRUE),
+                       smap=smap_f2, s_seq=s_seq[1:5],
+                       addcovar=as.matrix(fake_f2$covar), fig=FALSE)
+    
+deltaPVE <- pve_f2[,2] - c(0,pve_f2[1:4,2])
+argmax_s <- s_seq[1:5][deltaPVE==max(deltaPVE)]
+    
 scan_f2 <- scan_neighbor(genoprobs=genoprobs_f2,
-                         pheno=fake_f2$pheno[,1], gmap=gmap_f2,
-                         contrasts = c(TRUE,TRUE,TRUE), smap=smap_f2,
-                         scale=19.37, 
+                         pheno=nei_eff$nei_y,
+                         gmap=gmap_f2, contrasts=c(TRUE,TRUE,TRUE),
+                         smap=smap_f2, scale=argmax_s,
                          addcovar=as.matrix(fake_f2$covar)
                          )
+    
 plot_nei(scan_f2)
 
 ## ----bc-----------------------------------------------------------------------
@@ -127,15 +136,26 @@ smap_bc <- cbind(runif(qtl2::n_ind(fake_bc),1,100),runif(qtl2::n_ind(fake_bc),1,
 s_seq <- quantile(dist(smap_bc),c(0.1*(1:10)))
 gmap_bc <- qtl2::insert_pseudomarkers(fake_bc$gmap, step=2)
 genoprobs_bc <- qtl2::calc_genoprob(fake_bc,gmap_bc)
-pve_bc <- calc_pve(genoprobs=genoprobs_bc,pheno=fake_bc$pheno[,1],
-                   gmap=gmap_bc, smap=smap_bc, s_seq=s_seq,
-                   contrasts=c(TRUE,TRUE,FALSE),
-                   addcovar=as.matrix(fake_bc$covar), fig=FALSE
-                   )
+
+nei_eff <- sim_nei_qtl(genoprobs_bc, gmap_bc, a2=0.3, d2=-0.3, 
+                       contrasts=c(TRUE,TRUE,FALSE), smap=smap_bc, 
+                       scale=s_seq[1], n_QTL=1)
+
+pve_bc <- calc_pve(genoprobs=genoprobs_bc,
+                       pheno=nei_eff$nei_y,
+                       gmap=gmap_bc, contrasts=c(TRUE,TRUE,FALSE),
+                       smap=smap_bc, s_seq=s_seq[1:5],
+                       addcovar=as.matrix(fake_bc$covar), fig=FALSE)
+    
+deltaPVE <- pve_bc[,2] - c(0,pve_bc[1:4,2])
+argmax_s <- s_seq[1:5][deltaPVE==max(deltaPVE)]
+    
 scan_bc <- scan_neighbor(genoprobs=genoprobs_bc,
-                        pheno=fake_bc$pheno[,1],
-                        gmap=gmap_bc, contrasts = c(TRUE,TRUE,FALSE),
-                        smap=smap_bc, scale=59,
-                        addcovar=as.matrix(fake_bc$covar))
+                         pheno=nei_eff$nei_y,
+                         gmap=gmap_bc, contrasts=c(TRUE,TRUE,FALSE),
+                         smap=smap_bc, scale=argmax_s,
+                         addcovar=as.matrix(fake_bc$covar)
+                         )
+
 plot_nei(scan_bc)
 

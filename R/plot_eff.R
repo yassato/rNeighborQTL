@@ -6,7 +6,7 @@
 #' @seealso eff_neighbor
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 plot_eff = function(res, type="neighbor") {
-  x <- cumsum(res$pos)
+  x <- c(1:nrow(res))
 
   if(type=="neighbor") {
     a <- res$a2

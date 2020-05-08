@@ -47,6 +47,23 @@ eff_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sma
          stop("error: response must be 'quantitative' or 'binary'")
   )
 
+  makeX = function(addcovar, addQTL, type) {
+    X <- c()
+    if(is.null(addcovar)==FALSE) {
+      X <- cbind(X, addcovar)
+    }
+    if(is.null(addQTL)==FALSE) {
+      if(type=="self") {
+        X <- cbind(X, selfprobs[,addQTL])
+      } else if(type=="neighbor") {
+        X <- cbind(X, neiprobs[,addQTL])
+      } else {
+        stop("error: type must be 'self' or 'neighbor'")
+      }
+    }
+    return(X)
+  }
+
   self_k = function(k) {
     if(is.null(X)==TRUE) {
       res <- stats::glm(pheno~selfprobs[,k], family=glm_family)
@@ -69,30 +86,18 @@ eff_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sma
 
   selfprobs <- genoprobs2selfprobs(genoprobs=genoprobs, gmap=gmap, a1=1, d1=0, contrasts=contrasts)
   q <- ncol(selfprobs)
-  X <- c()
-  if(is.null(addcovar)==FALSE) {
-    X <- cbind(X, addcovar)
-  }
-  if(is.null(addQTL)==FALSE) {
-    X <- cbind(X, selfprobs[,addQTL])
-  }
+  X <- makeX(addcovar=addcovar, addQTL=addQTL, type="self")
   a1 <- mapply(self_k, 1:q)
 
   selfprobs <- genoprobs2selfprobs(genoprobs=genoprobs, gmap=gmap, a1=0, d1=1, contrasts=contrasts)
-  X <- c()
-  if(is.null(addcovar)==FALSE) {
-    X <- cbind(X, addcovar)
-  }
-  if(is.null(addQTL)==FALSE) {
-    X <- cbind(X, selfprobs[,addQTL])
-  }
+  X <- makeX(addcovar=addcovar, addQTL=addQTL, type="self")
   if(contrasts[2]==TRUE) {
     d1 <- mapply(self_k, 1:q)
   } else {
     d1 <- rep(NA, q)
   }
 
-  selfprobs <- genoprobs2selfprobs(genoprobs=genoprobs, gmap=gmap, a1=a1, d1=d1, contrasts=contrasts)
+
   nei_k <- function(k) {
     if(is.null(X)==TRUE) {
       res <- stats::glm(pheno~selfprobs[,k]+neiprobs[,k], family=glm_family)
@@ -113,34 +118,50 @@ eff_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sma
     return(coef)
   }
 
-  neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, a2=1, d2=0, contrasts=contrasts, smap=smap, scale=scale, grouping=grouping)
-  X <- c()
-  if(is.null(addcovar)==FALSE) {
-    X <- cbind(X, addcovar)
+  nei_2k <- function(k) {
+    if(is.null(X)==TRUE) {
+      res <- stats::glm(pheno~selfprobs[,k]+poly(neiprobs[,k],2), family=glm_family)
+      coef <- res$coef[c((length(res$coef)-1),length(res$coef))]
+    } else {
+      res <- try(stats::glm(pheno~X+selfprobs[,k]+poly(neiprobs[,k],2), family=glm_family))
+      if(is.na(res$coef[length(res$coef)-1])!=TRUE) {
+        coef <- res$coef[c((length(res$coef)-1),length(res$coef))]
+      } else {
+        if(is.null(addcovar)==TRUE) {
+          res <- stats::glm(pheno~selfprobs[,k]+poly(neiprobs[,k],2), family=glm_family)
+        } else {
+          res <- stats::glm(pheno~addcovar+selfprobs[,k]+poly(neiprobs[,k],2), family=glm_family)
+        }
+        coef <- res$coef[c((length(res$coef)-1),length(res$coef))]
+      }
+    }
+    return(coef)
   }
-  if(is.null(addQTL)==FALSE) {
-    X <- cbind(X, neiprobs[,addQTL])
-  }
-  a2 <- mapply(nei_k, 1:q)
 
-  neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, a2=0, d2=1, contrasts=contrasts, smap=smap, scale=scale, grouping=grouping)
-  X <- c()
-  if(is.null(addcovar)==FALSE) {
-    X <- cbind(X, addcovar)
-  }
-  if(is.null(addQTL)==FALSE) {
-    X <- cbind(X, neiprobs[,addQTL])
-  }
   if(contrasts[2]==TRUE) {
-    d2 <- mapply(nei_k, 1:q)
+    if(contrasts[3]==TRUE) {
+      neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, a2=1, d2=0.25, contrasts=contrasts, smap=smap, scale=scale, grouping=grouping, d2sq0=TRUE)
+      X <- makeX(addcovar=addcovar, addQTL=addQTL, type="neighbor")
+      coefs <- mapply(nei_2k, 1:q)
+      a2 <- sign(coefs[1,])*sqrt(abs(coefs[1,]))
+      d2 <- sqrt(abs(coefs[2,]))
+    } else if(contrasts[3]==FALSE) {
+      neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, a2=1, d2=0, contrasts=contrasts, smap=smap, scale=scale, grouping=grouping)
+      X <- makeX(addcovar=addcovar, addQTL=addQTL, type="neighbor")
+      a2 <- mapply(nei_k, 1:q)
+      a2 <- sign(a2)*sqrt(abs(a2))
+      d2 <- -a2
+    }
   } else {
+    neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, a2=1, d2=0, contrasts=contrasts, smap=smap, scale=scale, grouping=grouping)
+    X <- makeX(addcovar=addcovar, addQTL=addQTL, type="neighbor")
+    a2 <- mapply(nei_k, 1:q)
+    a2 <- sign(a2)*sqrt(abs(a2))
     d2 <- rep(NA, q)
   }
 
   marker_info <- get_markers(gmap)
   coeflist <- data.frame(marker_info, a1, d1, a2, d2)
-  coeflist[,5] <- sign(coeflist[,5])*sqrt(abs(coeflist[,5]))
-  coeflist[,6] <- sign(coeflist[,6])*sqrt(abs(coeflist[,6]))
   colnames(coeflist) <- c("chr","pos","a1","d1","a2","d2")
 
   if(fig==TRUE) {

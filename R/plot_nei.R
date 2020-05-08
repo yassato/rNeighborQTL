@@ -18,7 +18,7 @@ plot_nei = function(res, type="neighbor", chr=NULL, th=NULL, ...) {
     res = res[res$chr==chr,]
   }
 
-  x <- cumsum(res$pos)
+  x <- c(1:nrow(res))
 
   switch(type,
          "self" = y <- res$LOD_self,

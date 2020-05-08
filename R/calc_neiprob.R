@@ -9,9 +9,10 @@
 #' @param a2 A numeric scalar indicating additive deviation.
 #' @param d2 A numeric scalar indicating dominance deviation.
 #' @param grouping An integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.
+#' @param d2sq0 An option to make AB/AB interaction effects zero.
 #' @return A numeric matrix containing individuals x marker elements for neighbor QTL effects.
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
-calc_neiprob = function(genoprobs, gmap, a2, d2, contrasts=c(TRUE,TRUE,TRUE), smap, scale, grouping=rep(1,nrow(smap))) {
+calc_neiprob = function(genoprobs, gmap, a2, d2, contrasts=c(TRUE,TRUE,TRUE), smap, scale, grouping=rep(1,nrow(smap)), d2sq0=FALSE) {
   p <- dim(genoprobs[[1]])[1]
   geno <- decompose_genoprobs(genoprobs=genoprobs, contrasts=contrasts)
 
@@ -25,7 +26,7 @@ calc_neiprob = function(genoprobs, gmap, a2, d2, contrasts=c(TRUE,TRUE,TRUE), sm
       return(rep(0,ncol(geno$AA)))
     } else {
       for(j in j_id){
-        prob_ij <- neiprob(i=i, j=j, a2=a2, d2=d2, AA=geno$AA, AB=geno$AB, BB=geno$BB)
+        prob_ij <- neiprob(i=i, j=j, a2=a2, d2=d2, AA=geno$AA, AB=geno$AB, BB=geno$BB, d2sq0=d2sq0)
         prob_i <- prob_i + prob_ij
       }
       prob_i <- prob_i/length(j_id)

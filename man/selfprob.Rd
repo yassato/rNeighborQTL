@@ -7,7 +7,7 @@
 selfprob(i, a1, d1, AA, AB, BB)
 }
 \arguments{
-\item{i}{ID of a target individual}
+\item{i}{ID of a target individual.}
 
 \item{a1}{A numeric scalar indicating additive deviation.}
 

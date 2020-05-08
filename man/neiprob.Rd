@@ -4,25 +4,27 @@
 \alias{neiprob}
 \title{Calculating neighbor QTL effects}
 \usage{
-neiprob(i, j, a2, d2, AA, AB, BB)
+neiprob(i, j, a2, d2, AA, AB, BB, d2sq0 = FALSE)
 }
 \arguments{
-\item{i}{ID of a target individual}
+\item{i}{ID of a target individual.}
 
-\item{j}{ID of an interacting neighbor}
+\item{j}{ID of an interacting neighbor.}
 
-\item{a2}{A numeric scalar indicating additive deviation}
+\item{a2}{A numeric scalar indicating additive deviation.}
 
-\item{d2}{A numeric scalar indicating dominance deviation}
+\item{d2}{A numeric scalar indicating dominance deviation.}
 
 \item{AA}{An individual x marker matrix of conditional probabilities for AA genotype.}
 
 \item{AB}{An individual x marker matrix of conditional probabilities for AB genotype. Input NA if heterozygotes are absent.}
 
 \item{BB}{An individual x marker matrix of conditional probabilities for BB genotype. Input NA for backcross lines.}
+
+\item{d2sq0}{An option to make AB/AB interaction effects zero.}
 }
 \value{
-A numeric vector containing each marker effect for individual i
+A numeric vector containing each marker effect for individual i.
 }
 \description{
 A function to calculate neighbor QTL effects between two individuals, with given deviation coefficients and conditional genotype probabilities.

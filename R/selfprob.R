@@ -1,7 +1,7 @@
 #' Calculating self QTL effects
 #'
 #' A function to calculate self QTL effects for an individual, with given deviation coefficients and conditional genotype probabilities.
-#' @param i ID of a target individual
+#' @param i ID of a target individual.
 #' @param a1 A numeric scalar indicating additive deviation.
 #' @param d1 A numeric scalar indicating dominance deviation.
 #' @param AA An individual x marker matrix of conditional probabilities for AA genotype.

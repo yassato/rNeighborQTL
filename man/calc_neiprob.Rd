@@ -12,7 +12,8 @@ calc_neiprob(
   contrasts = c(TRUE, TRUE, TRUE),
   smap,
   scale,
-  grouping = rep(1, nrow(smap))
+  grouping = rep(1, nrow(smap)),
+  d2sq0 = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ calc_neiprob(
 \item{scale}{A numeric scalar indicating the maximum spatial distance between a focal individual and neighbors to define neighbor effects.}
 
 \item{grouping}{An integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
+
+\item{d2sq0}{An option to make AB/AB interaction effects zero.}
 }
 \value{
 A numeric matrix containing individuals x marker elements for neighbor QTL effects.
