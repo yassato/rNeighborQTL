@@ -52,6 +52,11 @@ A matrix of LOD scores for neighbor epistasis effects, with the chromosome numbe
 \description{
 A function to test interaction terms between one focal marker and the other markers across a genome.
 }
+\details{
+This is an optinal function to test two-way interactions between the main neighbor effect of a focal marker given by \code{intQTL} and the others.
+All the main neighbor effects are first esimated using \code{eff_neighbor()}, and then a two-way interaction term between the focal marker effect and its counterpart was considered an additional explnatory variable.
+LOD score was compared between models with or without the two-way interaction.
+}
 \examples{
 set.seed(1234)
 data("fake.f2",package="qtl")
@@ -69,7 +74,7 @@ int_f2 <- int_neighbor(genoprobs=genoprobs_f2,
 plot_nei(int_f2, type="int")
 }
 \seealso{
-scan_neighbor
+scan_neighbor eff_neighbor
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

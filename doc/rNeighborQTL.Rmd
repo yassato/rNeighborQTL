@@ -48,7 +48,7 @@ colkas_pve <- calc_pve(genoprobs=colkas_genoprob,
 ```
 
 ## Estimation of QTL effects
-<p>Then, the deviation coefficients $a$ and $d$ are estimated using a linear regression on the genotype probabilities, also known as Haley-Knott regression (Haley & Knott 1992). The "eff_neighbor()" estimates the coefficients for self and neighbor effects, and plots the results as follows.</p>
+<p>Similar to Haley-Knott regression (Haley & Knott 1992), the additive and dominance deviation $a$ and $d$ are estimated using a linear or quadratic regression on neighbor genotypic identity. The "eff_neighbor()" estimates the coefficients for self and neighbor effects, and plots the results as follows.</p>
 ```{r eff, fig.width=4, fig.height=8}
 colkas_eff <- eff_neighbor(genoprobs=colkas_genoprob,
                            pheno=log(colkas$pheno[,4]+1),
@@ -136,7 +136,7 @@ plot_nei(colkas_scanBin)
 ### *5. Crossing design*
 <p>The neighbor QTL package is able to handle AB heterozygotes. It also works even when there are only AA or AB genotypes. However, sex chromosomes are not supported currently, and should be excluded before the genome scan. This is a simulation using F2 or backcross lines implemented in the "R/qtl" package.</p>
 ```{r fake}
-#demo using F2
+#F2 lines
 set.seed(1234)
 data("fake.f2",package="qtl")
 fake_f2 <- qtl2::convert2cross2(fake.f2)

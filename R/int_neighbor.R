@@ -19,7 +19,11 @@
 #'  \item{\code{LOD_int}} {LOD score for epistasis in neighbor effects between a focal and the other markers}
 #' }
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
-#' @seealso scan_neighbor
+#' @details
+#' This is an optinal function to test two-way interactions between the main neighbor effect of a focal marker given by \code{intQTL} and the others.
+#' All the main neighbor effects are first esimated using \code{eff_neighbor()}, and then a two-way interaction term between the focal marker effect and its counterpart was considered an additional explnatory variable.
+#' LOD score was compared between models with or without the two-way interaction.
+#' @seealso scan_neighbor eff_neighbor
 #' @examples
 #' set.seed(1234)
 #' data("fake.f2",package="qtl")

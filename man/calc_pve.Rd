@@ -39,7 +39,7 @@ calc_pve(
 \item{fig}{TRUE/FALSE to add a figure of Delta PVE or not.}
 }
 \value{
-A matrix containing the maximum neighbor distance, phenotypic variation explained by neighbor effects, and p-value by LRT.
+A matrix containing the maximum neighbor distance, phenotypic variation explained by neighbor effects, and p-value by a likelihood ratio test.
 \itemize{
 \item{\code{scale}} {Maximum neighbor distance given as an argument}
 \item{\code{Var_nei}} {Proportion or ratio of phenotypic variation explained (PVE or RVE) by neighbor effects for linear or logistic mixed models, respectively}

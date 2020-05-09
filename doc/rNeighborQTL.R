@@ -94,7 +94,7 @@ colkas_scanBin <- scan_neighbor(genoprobs=colkas_genoprob, pheno=colkas$pheno[,6
 plot_nei(colkas_scanBin)
 
 ## ----fake---------------------------------------------------------------------
-#demo using F2
+#F2 lines
 set.seed(1234)
 data("fake.f2",package="qtl")
 fake_f2 <- qtl2::convert2cross2(fake.f2)

@@ -11,7 +11,7 @@
 #' @param grouping An optional integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.
 #' @param response An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} applies the \code{"lmm.aireml()"} or \code{"logistic.mm.aireml()"} for a mixed model, respectively.
 #' @param fig TRUE/FALSE to add a figure of Delta PVE or not.
-#' @return A matrix containing the maximum neighbor distance, phenotypic variation explained by neighbor effects, and p-value by LRT.
+#' @return A matrix containing the maximum neighbor distance, phenotypic variation explained by neighbor effects, and p-value by a likelihood ratio test.
 #' \itemize{
 #'  \item{\code{scale}} {Maximum neighbor distance given as an argument}
 #'  \item{\code{Var_nei}} {Proportion or ratio of phenotypic variation explained (PVE or RVE) by neighbor effects for linear or logistic mixed models, respectively}
@@ -47,7 +47,7 @@ calc_pve = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), smap, s
 
   res <- c()
   for(s in s_seq) {
-    if(class(s)=="numeric") { message("scale = ", round(s,3), "\n") }
+    if(class(s)=="numeric") { message("scale = ", round(s,3)) }
 
     selfprobs <- genoprobs2selfprobs(genoprobs=genoprobs, gmap=gmap, a1=1, d1=0, contrasts=contrasts)
 

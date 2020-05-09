@@ -1,6 +1,6 @@
 #' Estimation of self and neighbor QTL effects across a genome
 #'
-#' A function to estimate additive and dominance deviation for self and neighbor QTL effects by stepwise Haley-Knott regressions.
+#' A function to estimate additive and dominance deviation for self and neighbor QTL effects by a simple regression.
 #' @param genoprobs Conditional genotype probabilities as obtained from \code{qtl2::calc_genoprob()}.
 #' @param pheno A vector of individual phenotypes.
 #' @param gmap Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.
@@ -22,6 +22,10 @@
 #'  \item{\code{d2}} {Dominance deviation for neighbor effects}
 #' }
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
+#' @details
+#' Similar to Haley-Knott regression (Haley & Knott 1992), the additive and dominance deviations are approximated by a regression of trait values on conditional genotype probabilities.
+#' The self QTL effects \code{a1} and \code{d1} are esimated in the same way as the \code{qtl} package performs the Haley-Knott regression.
+#' If \code{contrasts = c(TRUE, TRUE, TRUE)}, neighbor QTL effects \code{a1} and \code{d1} are estimated using a quadratic regression; otherwise, the additive neighbor effects are estimated using a linear regression.
 #' @references
 #' * Haley CS, Knott SA (1992) A simple regression method for mapping quantitative trait loci in line crosses using flanking markers. Heredity 69:315-324.
 #' * Jansen RC (1993) Interval mapping of multiple quantitative trait loci. Genetics 135:205-211.
@@ -92,8 +96,14 @@ eff_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sma
   selfprobs <- genoprobs2selfprobs(genoprobs=genoprobs, gmap=gmap, a1=0, d1=1, contrasts=contrasts)
   X <- makeX(addcovar=addcovar, addQTL=addQTL, type="self")
   if(contrasts[2]==TRUE) {
-    d1 <- mapply(self_k, 1:q)
+    if(contrasts[3]==TRUE) {
+      a1 <- a1/2
+      d1 <- mapply(self_k, 1:q)
+    } else if(contrasts[3]==FALSE) {
+      d1 <- a1
+    }
   } else {
+    a1 <- a1/2
     d1 <- rep(NA, q)
   }
 
@@ -143,7 +153,7 @@ eff_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sma
       neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, a2=1, d2=0.25, contrasts=contrasts, smap=smap, scale=scale, grouping=grouping, d2sq0=TRUE)
       X <- makeX(addcovar=addcovar, addQTL=addQTL, type="neighbor")
       coefs <- mapply(nei_2k, 1:q)
-      a2 <- sign(coefs[1,])*sqrt(abs(coefs[1,]))
+      a2 <- sign(coefs[1,])*sqrt(abs(coefs[1,]/2))
       d2 <- sqrt(abs(coefs[2,]))
     } else if(contrasts[3]==FALSE) {
       neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, a2=1, d2=0, contrasts=contrasts, smap=smap, scale=scale, grouping=grouping)
@@ -156,7 +166,7 @@ eff_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sma
     neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, a2=1, d2=0, contrasts=contrasts, smap=smap, scale=scale, grouping=grouping)
     X <- makeX(addcovar=addcovar, addQTL=addQTL, type="neighbor")
     a2 <- mapply(nei_k, 1:q)
-    a2 <- sign(a2)*sqrt(abs(a2))
+    a2 <- sign(a2)*sqrt(abs(a2/2))
     d2 <- rep(NA, q)
   }
 

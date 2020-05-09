@@ -53,7 +53,12 @@ A matrix of estimated additive and dominance deviation for self and neighbor eff
 }
 }
 \description{
-A function to estimate additive and dominance deviation for self and neighbor QTL effects by stepwise Haley-Knott regressions.
+A function to estimate additive and dominance deviation for self and neighbor QTL effects by a simple regression.
+}
+\details{
+Similar to Haley-Knott regression (Haley & Knott 1992), the additive and dominance deviations are approximated by a regression of trait values on conditional genotype probabilities.
+The self QTL effects \code{a1} and \code{d1} are esimated in the same way as the \code{qtl} package performs the Haley-Knott regression.
+If \code{contrasts = c(TRUE, TRUE, TRUE)}, neighbor QTL effects \code{a1} and \code{d1} are estimated using a quadratic regression; otherwise, the additive neighbor effects are estimated using a linear regression.
 }
 \examples{
 set.seed(1234)
