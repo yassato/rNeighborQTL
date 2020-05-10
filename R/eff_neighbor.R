@@ -107,7 +107,7 @@ eff_neighbor = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), sma
     d1 <- rep(NA, q)
   }
 
-
+  selfprobs <- genoprobs2selfprobs(genoprobs=genoprobs, gmap=gmap, a1=a1, d1=d1, contrasts=contrasts)
   nei_k <- function(k) {
     if(is.null(X)==TRUE) {
       res <- stats::glm(pheno~selfprobs[,k]+neiprobs[,k], family=glm_family)
