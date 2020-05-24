@@ -1,19 +1,18 @@
 #' Calculating a set of neighbor QTL effects from conditional genotype probabilities
 #'
 #' A function to calculate self QTL effects for all individuals, with given deviation coefficients and conditional genotype probabilities.
-#' @param genoprobs Conditional genotype probabilities as obtained from \code{qtl2::calc_genoprob()}.
-#' @param gmap Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.
+#' @param genoprobs Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.
 #' @param contrasts A vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.
-#' @param smap A matrix showing a spatial map. The first and second column include spatial points along a x-axis and y-axis, respectively.
+#' @param smap A matrix showing a spatial map for individuals. The first and second column include spatial positions along an x-axis and y-axis, respectively.
 #' @param scale A numeric scalar indicating the maximum spatial distance between a focal individual and neighbors to define neighbor effects.
 #' @param a2 A numeric scalar indicating additive deviation.
 #' @param d2 A numeric scalar indicating dominance deviation.
-#' @param grouping An integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.
+#' @param grouping An integer vector assigning each individual to a group. This argument can be used when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.
 #' @param d2sq0 An option to make AB/AB interaction effects zero.
 #' @return A numeric matrix containing individuals x marker elements for neighbor QTL effects.
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
-calc_neiprob = function(genoprobs, gmap, a2, d2, contrasts=c(TRUE,TRUE,TRUE), smap, scale, grouping=rep(1,nrow(smap)), d2sq0=FALSE) {
-  p <- dim(genoprobs[[1]])[1]
+calc_neiprob = function(genoprobs, a2, d2, contrasts=c(TRUE,TRUE,TRUE), smap, scale, grouping=rep(1,nrow(smap)), d2sq0=FALSE) {
+  p <- dim(genoprobs$geno[[1]]$prob)[1]
   geno <- decompose_genoprobs(genoprobs=genoprobs, contrasts=contrasts)
 
   neiprob_i <- function(i) {
@@ -36,8 +35,7 @@ calc_neiprob = function(genoprobs, gmap, a2, d2, contrasts=c(TRUE,TRUE,TRUE), sm
   neiList <- mapply(neiprob_i, 1:p)
   neiList <- t(neiList)
 
-  marker_info <- get_markers(gmap)
+  marker_info <- get_markers(genoprobs=genoprobs)
   colnames(neiList) <- rownames(marker_info)
-  rownames(neiList) <- rownames(genoprobs[[1]])
   return(neiList)
 }

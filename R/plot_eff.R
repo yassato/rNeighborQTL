@@ -26,7 +26,7 @@ plot_eff = function(res, type="neighbor") {
     graphics::points(x[res$chr==i], a[res$chr==i], type="l", col=i, lty=1)
     graphics::points(x[res$chr==i], d[res$chr==i], type="l", col=i, lty=2)
   }
-  unobs = grep("c.", rownames(res))
+  unobs = grep("_loc", rownames(res))
   graphics::points(x[-unobs], a[-unobs], pch=16, cex=0.75)
   graphics::points(x[-unobs], d[-unobs], pch=1, cex=0.75)
 }

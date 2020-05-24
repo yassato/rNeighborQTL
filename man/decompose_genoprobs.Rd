@@ -7,9 +7,9 @@
 decompose_genoprobs(genoprobs, contrasts = c(TRUE, TRUE, TRUE))
 }
 \arguments{
-\item{genoprobs}{Conditional genotype probabilities as obtained from \code{qtl2::calc_genoprob()}.}
+\item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
+\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 }
 \value{
 A list of three numeric matrices for genotype probabilities AA, AB, and BB. Each contains elements of individuals x markers.
@@ -20,7 +20,7 @@ A list of three numeric matrices for genotype probabilities AA, AB, and BB. Each
 }
 }
 \description{
-A function to reshape \code{qtl2}'s object of conditional genotype probabilities.
+A function to decompose \code{qtl}'s object of conditional genotype probabilities.
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

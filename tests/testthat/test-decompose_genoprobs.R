@@ -1,0 +1,31 @@
+context("decompose_genoprobs")
+
+#load data
+colkas <- qtl::read.cross(format="csvs",dir="./",
+                          genfile="ColKas_geno.csv",phefile = "ColKas_pheno.csv",
+                          na.strings = c("_"), estimate.map=TRUE, crosstype = "riself")
+colkas_genoprob <- qtl::calc.genoprob(colkas, step=2)
+
+#F2
+set.seed(1234)
+data("fake.f2",package="qtl")
+fake_f2 <- fake.f2[1:19,]
+genoprobs_f2 <- qtl::calc.genoprob(fake_f2,step=2)
+
+#backcross
+set.seed(1234)
+data("fake.bc",package="qtl")
+fake_bc <- fake.bc[1:19,]
+genoprobs_bc <- qtl::calc.genoprob(fake_bc,step=2)
+
+test_that(
+  desc = "prob_sum_1",
+  code = {
+    geno_colkas <- decompose_genoprobs(colkas_genoprob, contrasts=c(TRUE,FALSE,TRUE))
+    geno_f2 <- decompose_genoprobs(genoprobs_f2, contrasts=c(TRUE,TRUE,TRUE))
+    geno_bc <- decompose_genoprobs(genoprobs_bc, contrasts=c(TRUE,TRUE,FALSE))
+
+    expect_equal(sum(round(geno_colkas$AA+geno_colkas$BB,3)!=1), 0)
+    expect_equal(sum(round(geno_f2$AA+geno_f2$AB+geno_f2$BB,3)!=1), 0)
+    expect_equal(sum(round(geno_bc$AA+geno_bc$AB,3)!=1), 0)
+})

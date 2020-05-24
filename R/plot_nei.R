@@ -10,7 +10,7 @@
 #' @details
 #' For the \code{type} argument, \code{"int"} can be selected to draw the results of \code{int_neighbor()}.
 #' In this case, the \code{res} object and \code{type} must match, otherwise it returns an error message.
-#' @seealso scan_neighbor int_neighbor perm_neighbor
+#' @seealso \code{\link{scan_neighbor}} \code{\link{int_neighbor}} \code{\link{perm_neighbor}}
 #' @export
 plot_nei = function(res, type="neighbor", chr=NULL, th=NULL, ...) {
 
@@ -40,7 +40,7 @@ plot_nei = function(res, type="neighbor", chr=NULL, th=NULL, ...) {
   for(i in levels(factor(res$chr))) {
     graphics::points(x[res$chr==i], y[res$chr==i], type="l", col=i)
   }
-  unobs = grep("c.",rownames(res))
+  unobs = grep("_loc", rownames(res))
   graphics::points(x[-unobs], y[-unobs], pch=16, cex=0.75)
   graphics::abline(h=th, col=grDevices::grey(0.5,0.5), lty=2)
 }

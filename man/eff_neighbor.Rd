@@ -7,7 +7,6 @@
 eff_neighbor(
   genoprobs,
   pheno,
-  gmap,
   contrasts = c(TRUE, TRUE, TRUE),
   smap,
   scale,
@@ -19,15 +18,13 @@ eff_neighbor(
 )
 }
 \arguments{
-\item{genoprobs}{Conditional genotype probabilities as obtained from \code{qtl2::calc_genoprob()}.}
+\item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 
 \item{pheno}{A vector of individual phenotypes.}
 
-\item{gmap}{Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.}
+\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
-
-\item{smap}{A matrix showing a spatial map. The first and second column include spatial points along a x-axis and y-axis, respectively.}
+\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial position along an x-axis and y-axis, respectively.}
 
 \item{scale}{A numeric scalar indicating the maximum spatial distance between a focal individual and neighbors to define neighbor effects.}
 
@@ -35,7 +32,7 @@ eff_neighbor(
 
 \item{addQTL}{An optional vector containing marker names that are considered covariates. Namely, this option allows composite interval mapping (Jansen 1993).}
 
-\item{grouping}{An optional integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
+\item{grouping}{An optional integer vector assigning each individual to a group. This argument can be used when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
 
 \item{response}{An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} calls the \code{"gaussian"} or \code{"binomial"} family in \code{glm()}, respectively.}
 
@@ -57,27 +54,28 @@ A function to estimate additive and dominance deviation for self and neighbor QT
 }
 \details{
 Similar to Haley-Knott regression (Haley & Knott 1992), the additive and dominance deviations are approximated by a regression of trait values on conditional genotype probabilities.
-The self QTL effects \code{a1} and \code{d1} are esimated in the same way as the \code{qtl} package performs the Haley-Knott regression.
+The self QTL effects \code{a1} and \code{d1} are estimated in the same way as the \code{qtl} package performs the Haley-Knott regression.
 If \code{contrasts = c(TRUE, TRUE, TRUE)}, neighbor QTL effects \code{a1} and \code{d1} are estimated using a quadratic regression; otherwise, the additive neighbor effects are estimated using a linear regression.
+See also Sato, Takeda & Nagano (2020) for the rationale behind the approximation.
 }
 \examples{
 set.seed(1234)
-data("fake.f2",package="qtl")
-fake_f2 <- qtl2::convert2cross2(fake.f2)
-fake_f2 <- subset(fake_f2,chr=c(1:19))
-smap_f2 <- cbind(runif(qtl2::n_ind(fake_f2),1,100),runif(qtl2::n_ind(fake_f2),1,100))
-gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=2)
-genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2)
-eff_f2 <- eff_neighbor(genoprobs=genoprobs_f2,
-                       pheno=fake_f2$pheno[,1],
-                       gmap=gmap_f2, smap=smap_f2,
-                       scale=19.37, addcovar=as.matrix(fake_f2$covar)
-                       )
+test_map <- qtl::sim.map(len=rep(20,5),n.mar=5,include.x=FALSE)
+test_cross <- qtl::sim.cross(test_map,n.ind=50)
+test_smap <- cbind(runif(50,1,100),runif(50,1,100))
+test_genoprobs <- qtl::calc.genoprob(test_cross,step=2)
+
+test_eff <- eff_neighbor(genoprobs=test_genoprobs,
+                         pheno=test_cross$pheno$phenotype,
+                         contrasts=c(TRUE,TRUE,TRUE),
+                         smap=test_smap, scale=20, fig=TRUE
+                         )
 }
 \references{
 \itemize{
 \item Haley CS, Knott SA (1992) A simple regression method for mapping quantitative trait loci in line crosses using flanking markers. Heredity 69:315-324.
 \item Jansen RC (1993) Interval mapping of multiple quantitative trait loci. Genetics 135:205-211.
+\item Sato Y, Takeda K, Nagano AJ (2020) Neighbor QTL: an interval mapping method for quantitative trait loci underlying neighbor effects. bioRxiv \url{https://doi.org/10.1101/2020.05.20.089474}
 }
 }
 \author{

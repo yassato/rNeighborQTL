@@ -4,24 +4,22 @@
 \alias{genoprobs2selfprobs}
 \title{Calculating a set of self QTL effects from conditional genotype probabilities}
 \usage{
-genoprobs2selfprobs(genoprobs, gmap, a1, d1, contrasts = c(TRUE, TRUE, TRUE))
+genoprobs2selfprobs(genoprobs, a1, d1, contrasts = c(TRUE, TRUE, TRUE))
 }
 \arguments{
-\item{genoprobs}{Conditional genotype probabilities as obtained from \code{qtl2::calc_genoprob()}.}
-
-\item{gmap}{Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.}
+\item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 
 \item{a1}{A numeric scalar indicating additive deviation.}
 
 \item{d1}{A numeric scalar indicating dominance deviation.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
+\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 }
 \value{
 A numeric matrix containing individuals x marker elements for self QTL effects.
 }
 \description{
-A function to reshape \code{qtl2}'s object of conditional genotype probabilities, and to calculate self QTL effects for all individuals with given deviation coefficients and conditional genotype probabilities.
+A function to reshape \code{qtl}'s object of conditional genotype probabilities, and to calculate self QTL effects for all individuals with given deviation coefficients and conditional genotype probabilities.
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

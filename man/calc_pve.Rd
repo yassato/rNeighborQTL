@@ -7,7 +7,6 @@
 calc_pve(
   genoprobs,
   pheno,
-  gmap,
   contrasts = c(TRUE, TRUE, TRUE),
   smap,
   s_seq,
@@ -18,21 +17,19 @@ calc_pve(
 )
 }
 \arguments{
-\item{genoprobs}{Conditional genotype probabilities as obtained from \code{qtl2::calc_genoprob()}.}
+\item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 
 \item{pheno}{A vector of individual phenotypes.}
 
-\item{gmap}{Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.}
+\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
-
-\item{smap}{A matrix showing a spatial map. The first and second column include spatial points along a x-axis and y-axis, respectively.}
+\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial positions along an x-axis and y-axis, respectively.}
 
 \item{s_seq}{A numeric vector including a set of the maximum spatial distance between a focal individual and neighbors to define neighbor effects. A scalar is also allowed.}
 
 \item{addcovar}{An optional matrix including additional non-genetic covariates. It contains no. of individuals x no. of covariates.}
 
-\item{grouping}{An optional integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
+\item{grouping}{An optional integer vector assigning each individual to a group. This argument can be used when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
 
 \item{response}{An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} applies the \code{"lmm.aireml()"} or \code{"logistic.mm.aireml()"} for a mixed model, respectively.}
 
@@ -57,19 +54,17 @@ This is because a logistic mixed model \code{logistic.mm.aireml()} called via th
 }
 \examples{
 set.seed(1234)
-data("fake.f2",package="qtl")
-fake_f2 <- qtl2::convert2cross2(fake.f2)
-fake_f2 <- subset(fake_f2,chr=c(1:19))
-smap_f2 <- cbind(runif(qtl2::n_ind(fake_f2),1,100),runif(qtl2::n_ind(fake_f2),1,100))
-gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=2)
-genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2)
-s_seq <- quantile(dist(smap_f2),c(0.1*(1:10)))
-pve_f2 <- calc_pve(genoprobs=genoprobs_f2,
-                   pheno=fake_f2$pheno[,1], gmap=gmap_f2,
-                   smap=smap_f2, s_seq=s_seq,
-                   contrasts=c(TRUE,TRUE,TRUE),
-                   addcovar=as.matrix(fake_f2$covar)
-                   )
+test_map <- qtl::sim.map(len=rep(20,5),n.mar=5,include.x=FALSE)
+test_cross <- qtl::sim.cross(test_map,n.ind=50)
+test_smap <- cbind(runif(50,1,100),runif(50,1,100))
+test_genoprobs <- qtl::calc.genoprob(test_cross,step=2)
+s_seq <- quantile(dist(test_smap),c(0.1*(1:10)))
+
+test_pve <- calc_pve(genoprobs=test_genoprobs,
+                     pheno=test_cross$pheno$phenotype,
+                     smap=test_smap, s_seq=s_seq,
+                     contrasts=c(TRUE,TRUE,TRUE),
+                     )
 }
 \references{
 \itemize{

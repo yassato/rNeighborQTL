@@ -25,7 +25,7 @@ For the \code{type} argument, \code{"int"} can be selected to draw the results o
 In this case, the \code{res} object and \code{type} must match, otherwise it returns an error message.
 }
 \seealso{
-scan_neighbor int_neighbor perm_neighbor
+\code{\link{scan_neighbor}} \code{\link{int_neighbor}} \code{\link{perm_neighbor}}
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

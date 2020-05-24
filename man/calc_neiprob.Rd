@@ -6,7 +6,6 @@
 \usage{
 calc_neiprob(
   genoprobs,
-  gmap,
   a2,
   d2,
   contrasts = c(TRUE, TRUE, TRUE),
@@ -17,9 +16,7 @@ calc_neiprob(
 )
 }
 \arguments{
-\item{genoprobs}{Conditional genotype probabilities as obtained from \code{qtl2::calc_genoprob()}.}
-
-\item{gmap}{Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.}
+\item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 
 \item{a2}{A numeric scalar indicating additive deviation.}
 
@@ -27,11 +24,11 @@ calc_neiprob(
 
 \item{contrasts}{A vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 
-\item{smap}{A matrix showing a spatial map. The first and second column include spatial points along a x-axis and y-axis, respectively.}
+\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial positions along an x-axis and y-axis, respectively.}
 
 \item{scale}{A numeric scalar indicating the maximum spatial distance between a focal individual and neighbors to define neighbor effects.}
 
-\item{grouping}{An integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
+\item{grouping}{An integer vector assigning each individual to a group. This argument can be used when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
 
 \item{d2sq0}{An option to make AB/AB interaction effects zero.}
 }

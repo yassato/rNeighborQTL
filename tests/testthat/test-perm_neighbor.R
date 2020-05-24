@@ -3,9 +3,7 @@ context("perm_neighbor")
 #load data
 colkas <- qtl::read.cross(format="csvs",dir="./",genfile="ColKas_geno.csv",phefile = "ColKas_pheno.csv",
                           na.strings = c("_"), estimate.map=TRUE, crosstype = "riself")
-colkas <- qtl2::convert2cross2(colkas)
-gmap_colkas <- qtl2::insert_pseudomarkers(colkas$gmap, step=2)
-colkas_genoprob <- qtl2::calc_genoprob(colkas,gmap_colkas)
+colkas_genoprob <- qtl::calc.genoprob(colkas, step=2)
 x <- colkas$pheno[,2]
 y <- colkas$pheno[,3]
 smap_colkas <- data.frame(x,y)
@@ -14,43 +12,42 @@ s_colkas <- quantile(dist(smap_colkas),c(0.1*(0:10)))
 #F2
 set.seed(1234)
 data("fake.f2",package="qtl")
-fake_f2 <- qtl2::convert2cross2(fake.f2)
-fake_f2 <- subset(fake_f2,chr=c(1:19))
-smap_f2 <- cbind(runif(qtl2::n_ind(fake_f2),1,100),runif(qtl2::n_ind(fake_f2),1,100))
-gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=2)
-genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2)
+fake_f2 <- fake.f2[1:19,]
+smap_f2 <- cbind(runif(qtl::nind(fake_f2),1,100),runif(qtl::nind(fake_f2),1,100))
+genoprobs_f2 <- qtl::calc.genoprob(fake_f2,step=2)
 s_f2 <- quantile(dist(smap_f2),c(0.1*(1:10)))
 
 #backcross
 set.seed(1234)
 data("fake.bc",package="qtl")
-fake_bc <- qtl2::convert2cross2(fake.bc)
-fake_bc <- subset(fake_bc,chr=c(1:19))
-smap_bc <- cbind(runif(qtl2::n_ind(fake_bc),1,100),runif(qtl2::n_ind(fake_bc),1,100))
-gmap_bc <- qtl2::insert_pseudomarkers(fake_bc$gmap, step=2)
-genoprobs_bc <- qtl2::calc_genoprob(fake_bc,gmap_bc)
+fake_bc <- fake.bc[1:19,]
+smap_bc <- cbind(runif(qtl::nind(fake_bc),1,100),runif(qtl::nind(fake_bc),1,100))
+genoprobs_bc <- qtl::calc.genoprob(fake_bc,step=2)
 s_bc <- quantile(dist(smap_bc),c(0.1*(1:10)))
 
 test_that(
   desc = "perm_LOD_min",
   code = {
     perm_colkas <- perm_neighbor(genoprobs=colkas_genoprob,
-                                 pheno=log(colkas$pheno[,4]+1),
-                                 gmap=gmap_colkas, contrasts=c(TRUE,FALSE,TRUE),
-                                 smap=smap_colkas, scale=7, addcovar=colkas$pheno[,6:8],
-                                 times=9, p_val=1.0, type="neighbor")
+                                 pheno=log(colkas$pheno[,5]+1),
+                                 contrasts=c(TRUE,FALSE,TRUE),
+                                 smap=smap_colkas, scale=7,
+                                 addcovar=as.matrix(colkas$pheno[,7:9]),
+                                 times=5, p_val=1.0, type="neighbor")
 
     perm_f2 = perm_neighbor(genoprobs=genoprobs_f2,
                             pheno=fake_f2$pheno[,1],
-                            gmap=gmap_f2, contrasts = c(TRUE,TRUE,TRUE),
-                            smap=smap_f2, scale=28.2, addcovar=as.matrix(fake_f2$covar),
-                            times=9, p_val=1.0, type="neighbor")
+                            contrasts=c(TRUE,TRUE,TRUE),
+                            smap=smap_f2, scale=28.2,
+                            addcovar=as.matrix(cbind(fake_f2$pheno$sex,fake_f2$pheno$pgm)),
+                            times=5, p_val=1.0, type="neighbor")
 
     perm_bc = perm_neighbor(genoprobs=genoprobs_bc,
                             pheno=fake_bc$pheno[,1],
-                            gmap=gmap_bc, contrasts = c(TRUE,TRUE,FALSE),
-                            smap=smap_bc, scale=50.7, addcovar=as.matrix(fake_bc$covar),
-                            times=9, p_val=1.0, type="neighbor")
+                            contrasts=c(TRUE,TRUE,FALSE),
+                            smap=smap_bc, scale=50.7,
+                            addcovar=as.matrix(cbind(fake_bc$pheno$sex,fake_bc$pheno$pgm)),
+                            times=5, p_val=1.0, type="neighbor")
 
     expect_true(perm_colkas>=0)
     expect_true(perm_f2>=0)
@@ -62,28 +59,29 @@ test_that(
   desc = "int_perm_LOD_min",
   code = {
     perm_colkas_int <- perm_neighbor(genoprobs=colkas_genoprob,
-                               pheno=log(colkas$pheno[,4]+1),
-                               gmap=gmap_colkas, contrasts=c(TRUE,FALSE,TRUE),
-                               smap=smap_colkas, scale=7, addcovar=colkas$pheno[,6:8],
-                               addQTL=c("nga8"), intQTL="nga8",
-                               times=9, p_val=1.0, type="int")
+                               pheno=log(colkas$pheno[,5]+1),
+                               contrasts=c(TRUE,FALSE,TRUE),
+                               smap=smap_colkas, scale=7,
+                               addcovar=as.matrix(colkas$pheno[,7:9]),
+                               addQTL=c("c4_nga8"), intQTL="c4_nga8",
+                               times=5, p_val=1.0, type="int")
 
     perm_f2_int <- perm_neighbor(genoprobs=genoprobs_f2,
                            pheno=fake_f2$pheno[,1],
-                           gmap=gmap_f2, contrasts=c(TRUE,TRUE,TRUE),
+                           contrasts=c(TRUE,TRUE,TRUE),
                            smap=smap_f2, scale=20,
-                           addcovar=as.matrix(fake_f2$covar),
-                           addQTL=c("D1M318","D1M212"), intQTL="D1M212",
-                           grouping=fake_f2$covar$pgm,
-                           times=9, p_val=1.0, type="int")
+                           addcovar=as.matrix(cbind(fake_f2$pheno$sex,fake_f2$pheno$pgm)),
+                           addQTL=c("c1_D1M318","c1_D1M212"), intQTL="c1_D1M212",
+                           grouping=fake_f2$pheno$pgm,
+                           times=5, p_val=1.0, type="int")
 
     perm_bc_int <- perm_neighbor(genoprobs=genoprobs_bc,
                            pheno=fake_bc$pheno[,1],
-                           gmap=gmap_bc, contrasts = c(TRUE,TRUE,FALSE),
+                           contrasts=c(TRUE,TRUE,FALSE),
                            smap=smap_bc, scale=59,
-                           addcovar=NULL,
-                           addQTL=c("D1M318","D1M212"), intQTL="D1M212",
-                           times=9, p_val=1.0, type="int")
+                           addcovar=as.matrix(cbind(fake_bc$pheno$sex,fake_bc$pheno$pgm)),
+                           addQTL=c("c1_D1M318","c1_D1M212"), intQTL="c1_D1M212",
+                           times=5, p_val=1.0, type="int")
 
     expect_true(perm_colkas_int>=0)
     expect_true(perm_f2_int>=0)

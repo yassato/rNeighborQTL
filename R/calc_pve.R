@@ -1,14 +1,13 @@
 #' Calculating phenotypic variation explained by neighbor effects
 #'
 #' A function to calculate the proportion or ratio of phenotypic variation explained (PVE or RVE) by neighbor effects for a series of neighbor distance (\code{s_seq}) using mixed models.
-#' @param genoprobs Conditional genotype probabilities as obtained from \code{qtl2::calc_genoprob()}.
+#' @param genoprobs Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.
 #' @param pheno A vector of individual phenotypes.
-#' @param gmap Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.
-#' @param contrasts  A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.
-#' @param smap A matrix showing a spatial map. The first and second column include spatial points along a x-axis and y-axis, respectively.
+#' @param contrasts A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.
+#' @param smap A matrix showing a spatial map for individuals. The first and second column include spatial positions along an x-axis and y-axis, respectively.
 #' @param s_seq A numeric vector including a set of the maximum spatial distance between a focal individual and neighbors to define neighbor effects. A scalar is also allowed.
 #' @param addcovar An optional matrix including additional non-genetic covariates. It contains no. of individuals x no. of covariates.
-#' @param grouping An optional integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.
+#' @param grouping An optional integer vector assigning each individual to a group. This argument can be used when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.
 #' @param response An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} applies the \code{"lmm.aireml()"} or \code{"logistic.mm.aireml()"} for a mixed model, respectively.
 #' @param fig TRUE/FALSE to add a figure of Delta PVE or not.
 #' @return A matrix containing the maximum neighbor distance, phenotypic variation explained by neighbor effects, and p-value by a likelihood ratio test.
@@ -29,34 +28,32 @@
 #' @import gaston Matrix
 #' @examples
 #' set.seed(1234)
-#' data("fake.f2",package="qtl")
-#' fake_f2 <- qtl2::convert2cross2(fake.f2)
-#' fake_f2 <- subset(fake_f2,chr=c(1:19))
-#' smap_f2 <- cbind(runif(qtl2::n_ind(fake_f2),1,100),runif(qtl2::n_ind(fake_f2),1,100))
-#' gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=2)
-#' genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2)
-#' s_seq <- quantile(dist(smap_f2),c(0.1*(1:10)))
-#' pve_f2 <- calc_pve(genoprobs=genoprobs_f2,
-#'                    pheno=fake_f2$pheno[,1], gmap=gmap_f2,
-#'                    smap=smap_f2, s_seq=s_seq,
-#'                    contrasts=c(TRUE,TRUE,TRUE),
-#'                    addcovar=as.matrix(fake_f2$covar)
-#'                    )
+#' test_map <- qtl::sim.map(len=rep(20,5),n.mar=5,include.x=FALSE)
+#' test_cross <- qtl::sim.cross(test_map,n.ind=50)
+#' test_smap <- cbind(runif(50,1,100),runif(50,1,100))
+#' test_genoprobs <- qtl::calc.genoprob(test_cross,step=2)
+#' s_seq <- quantile(dist(test_smap),c(0.1*(1:10)))
+#'
+#' test_pve <- calc_pve(genoprobs=test_genoprobs,
+#'                      pheno=test_cross$pheno$phenotype,
+#'                      smap=test_smap, s_seq=s_seq,
+#'                      contrasts=c(TRUE,TRUE,TRUE),
+#'                      )
 #' @export
-calc_pve = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), smap, s_seq, addcovar=NULL, grouping=rep(1,nrow(smap)), response="quantitative", fig=TRUE) {
+calc_pve = function(genoprobs, pheno, contrasts=c(TRUE,TRUE,TRUE), smap, s_seq, addcovar=NULL, grouping=rep(1,nrow(smap)), response="quantitative", fig=TRUE) {
 
   res <- c()
   for(s in s_seq) {
     if(class(s)=="numeric") { message("scale = ", round(s,3)) }
 
-    selfprobs <- genoprobs2selfprobs(genoprobs=genoprobs, gmap=gmap, a1=1, d1=0, contrasts=contrasts)
+    selfprobs <- genoprobs2selfprobs(genoprobs=genoprobs, a1=1, d1=0, contrasts=contrasts)
 
     if((contrasts[2]==TRUE)&(contrasts[3]==FALSE)) {
-      neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=-1, grouping=grouping)
+      neiprobs <- calc_neiprob(genoprobs=genoprobs, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=-1, grouping=grouping)
     } else if(contrasts[2]==TRUE) {
-      neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=0.5, grouping=grouping, d2sq0=TRUE)
+      neiprobs <- calc_neiprob(genoprobs=genoprobs, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=0.5, grouping=grouping, d2sq0=TRUE)
     } else {
-      neiprobs <- calc_neiprob(genoprobs=genoprobs, gmap=gmap, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=0, grouping=grouping)
+      neiprobs <- calc_neiprob(genoprobs=genoprobs, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=0, grouping=grouping)
     }
 
     selfprobs <- (selfprobs-mean(selfprobs))/stats::sd(selfprobs)
@@ -100,9 +97,7 @@ calc_pve = function(genoprobs, pheno, gmap, contrasts=c(TRUE,TRUE,TRUE), smap, s
 
     graphics::plot(s_seq, deltaPVE, type="l", xlab="spatial scale", ylab=ylab)
     graphics::points(s_seq, deltaPVE)
-    max(deltaPVE)
-    s_seq[deltaPVE==max(deltaPVE)]
-    graphics::points(s_seq[deltaPVE==max(deltaPVE)],deltaPVE[deltaPVE==max(deltaPVE)],pch=16)
+    graphics::points(s_seq[deltaPVE==max(deltaPVE)[1]],deltaPVE[deltaPVE==max(deltaPVE)[1]],pch=16)
   }
   return(res)
 }

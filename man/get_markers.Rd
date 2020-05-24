@@ -4,10 +4,10 @@
 \alias{get_markers}
 \title{Reshaping marker information}
 \usage{
-get_markers(gmap)
+get_markers(genoprobs)
 }
 \arguments{
-\item{gmap}{Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.}
+\item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 }
 \value{
 A matrix showing the chromosome numbers (the first column) and positions (the second column) for all markers (row names).

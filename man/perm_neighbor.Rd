@@ -7,7 +7,6 @@
 perm_neighbor(
   genoprobs,
   pheno,
-  gmap,
   contrasts = c(TRUE, TRUE, TRUE),
   smap,
   scale,
@@ -23,15 +22,13 @@ perm_neighbor(
 )
 }
 \arguments{
-\item{genoprobs}{Conditional genotype probabilities as obtained from \code{qtl2::calc_genoprob()}.}
+\item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 
 \item{pheno}{A vector of individual phenotypes.}
 
-\item{gmap}{Genetic map including observed and pseudomarkers, as obtained from \code{qtl2::insert_pseudomarkers()}.}
+\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
-
-\item{smap}{A matrix showing a spatial map. The first and second column include spatial points along a x-axis and y-axis, respectively.}
+\item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial positions along an x-axis and y-axis, respectively.}
 
 \item{scale}{A numeric scalar indicating the maximum spatial distance between a focal individual and neighbors to define neighbor effects.}
 
@@ -41,7 +38,7 @@ perm_neighbor(
 
 \item{intQTL}{An option when using \code{int_neighbor()}. A name of a focal marker to be tested for its epistasis with the other markers in neighbor effects. The marker name must be included by \code{addQTL}.}
 
-\item{grouping}{An optional integer vector assigning each individual to a group. This argument can be useful when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
+\item{grouping}{An optional integer vector assigning each individual to a group. This argument can be used when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
 
 \item{response}{An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} calls the \code{"gaussian"} or \code{"binomial"} family in \code{glm()}, respectively.}
 
@@ -61,22 +58,19 @@ A function to calculate a genome-wide LOD threshold using permutation tests for 
 }
 \examples{
 set.seed(1234)
-data("fake.f2",package="qtl")
-fake_f2 <- qtl2::convert2cross2(fake.f2)
-fake_f2 <- subset(fake_f2,chr=c(1:19))
-smap_f2 <- cbind(runif(qtl2::n_ind(fake_f2),1,100),runif(qtl2::n_ind(fake_f2),1,100))
-gmap_f2 <- qtl2::insert_pseudomarkers(fake_f2$gmap, step=1)
-genoprobs_f2 <- qtl2::calc_genoprob(fake_f2,gmap_f2,error_prob=0.002)
+test_map <- qtl::sim.map(len=rep(20,5),n.mar=5,include.x=FALSE)
+test_cross <- qtl::sim.cross(test_map,n.ind=50)
+test_smap <- cbind(runif(50,1,100),runif(50,1,100))
+test_genoprobs <- qtl::calc.genoprob(test_cross,step=2)
 
-perm_f2 <- perm_neighbor(genoprobs=genoprobs_f2,
-                           pheno=fake_f2$pheno[,1],
-                           gmap=gmap_f2, smap=smap_f2,
-                           scale=19.37, addcovar=as.matrix(fake_f2$covar),
+test_perm <- perm_neighbor(genoprobs=test_genoprobs,
+                           pheno=test_cross$pheno$phenotype,
+                           smap=test_smap,scale=20,
                            times=19, p_val=c(0.1,0.05,0.01)
                            )
 }
 \seealso{
-plot_nei scan_neighbor int_neighbor
+\code{\link{plot_nei}} \code{\link{scan_neighbor}} \code{\link{int_neighbor}}
 }
 \author{
 Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})

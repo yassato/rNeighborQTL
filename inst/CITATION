@@ -1,0 +1,15 @@
+citHeader("To cite rNeighborQTL in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "Neighbor QTL: an interval mapping method for quantitative trait loci underlying neighbor effects",
+  author   = personList(as.person("Yasuhiro Sato"),
+                        as.person("Kazuya Takeda"),
+                        as.person("Atsushi J. Nagano")
+                        ),
+  journal  = "bioRxiv",
+  year     = "2020",
+  DOI      = "10.1101/2020.05.20.089474",
+  url      = "https://doi.org/10.1101/2020.05.20.089474",
+  textVersion = paste("Sato Y, Takeda K, Nagano AJ (2020) Neighbor QTL: an interval mapping method for quantitative trait loci underlying neighbor effects. bioRxiv https://doi.org/10.1101/2020.05.20.089474")
+)
