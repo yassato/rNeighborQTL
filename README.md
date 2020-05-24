@@ -10,7 +10,6 @@ Note that the rNeighborQTL requires the following R packages.
 - gaston
 - parallel
 - qtl
-- qtl2
 
 ## Usage
 Please see *vignette("rNeighborQTL")* after the installation.  
