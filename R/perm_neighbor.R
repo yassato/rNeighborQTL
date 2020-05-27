@@ -21,7 +21,7 @@
 #' @import parallel
 #' @examples
 #' set.seed(1234)
-#' test_map <- qtl::sim.map(len=rep(20,5),n.mar=5,include.x=FALSE)
+#' test_map <- qtl::sim.map(len=rep(20,5),n.mar=3,include.x=FALSE)
 #' test_cross <- qtl::sim.cross(test_map,n.ind=50)
 #' test_smap <- cbind(runif(50,1,100),runif(50,1,100))
 #' test_genoprobs <- qtl::calc.genoprob(test_cross,step=2)
@@ -29,7 +29,7 @@
 #' test_perm <- perm_neighbor(genoprobs=test_genoprobs,
 #'                            pheno=test_cross$pheno$phenotype,
 #'                            smap=test_smap,scale=20,
-#'                            times=19, p_val=c(0.1,0.05,0.01)
+#'                            times=3, p_val=c(1.0,0.5)
 #'                            )
 #' @export
 perm_neighbor = function(genoprobs, pheno, contrasts=c(TRUE,TRUE,TRUE), smap, scale, addcovar=NULL, addQTL=NULL, intQTL=NULL, grouping=rep(1,nrow(smap)), response="quantitative", type="neighbor", times=99, p_val=0.05, n_core=1L) {

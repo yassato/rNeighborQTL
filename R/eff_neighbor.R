@@ -32,7 +32,7 @@
 #' * Sato Y, Takeda K, Nagano AJ (2020) Neighbor QTL: an interval mapping method for quantitative trait loci underlying neighbor effects. bioRxiv \url{https://doi.org/10.1101/2020.05.20.089474}
 #' @examples
 #' set.seed(1234)
-#' test_map <- qtl::sim.map(len=rep(20,5),n.mar=5,include.x=FALSE)
+#' test_map <- qtl::sim.map(len=rep(20,5),n.mar=3,include.x=FALSE)
 #' test_cross <- qtl::sim.cross(test_map,n.ind=50)
 #' test_smap <- cbind(runif(50,1,100),runif(50,1,100))
 #' test_genoprobs <- qtl::calc.genoprob(test_cross,step=2)

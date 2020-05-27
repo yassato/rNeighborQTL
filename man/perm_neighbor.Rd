@@ -58,7 +58,7 @@ A function to calculate a genome-wide LOD threshold using permutation tests for 
 }
 \examples{
 set.seed(1234)
-test_map <- qtl::sim.map(len=rep(20,5),n.mar=5,include.x=FALSE)
+test_map <- qtl::sim.map(len=rep(20,5),n.mar=3,include.x=FALSE)
 test_cross <- qtl::sim.cross(test_map,n.ind=50)
 test_smap <- cbind(runif(50,1,100),runif(50,1,100))
 test_genoprobs <- qtl::calc.genoprob(test_cross,step=2)
@@ -66,7 +66,7 @@ test_genoprobs <- qtl::calc.genoprob(test_cross,step=2)
 test_perm <- perm_neighbor(genoprobs=test_genoprobs,
                            pheno=test_cross$pheno$phenotype,
                            smap=test_smap,scale=20,
-                           times=19, p_val=c(0.1,0.05,0.01)
+                           times=3, p_val=c(1.0,0.5)
                            )
 }
 \seealso{

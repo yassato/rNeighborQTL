@@ -68,16 +68,15 @@ colkas_scan <- scan_neighbor(genoprobs=colkas_genoprob,
                              )
 plot_nei(colkas_scan)
 ```
-<p>In addition to the genome scan, we can perform permutation tests to estimate a genome-wide significance level. Such permutation tests better account data structure, but require much computational time. Here is a handful example with 99-times permutations.</p> 
-```{r perm}
+<p>In addition to the genome scan, we can perform permutation tests to estimate a genome-wide significance level. Such permutation tests better account data structure, but require much computational time. This is an example code for 3-times permutations.</p> 
+```{r perm, eval=FALSE}
 colkas_perm <- perm_neighbor(genoprobs=colkas_genoprob, 
                              pheno=log(colkas$pheno[,5]+1),
                              contrasts=c(TRUE,FALSE,TRUE),
                              smap=smap_colkas, scale=7,
                              addcovar=as.matrix(colkas$pheno[,6:8]),
-                             times=99, p_val=c(0.1,0.05,0.01)
+                             times=3, p_val=c(0.5,0.1)
                              )
-print(colkas_perm)
 ```
 
 ## Extensions
@@ -94,8 +93,8 @@ plot(colkas_scanone)
 ```
 
 ### *2. Composite interval mapping*
-<p>The "addQTL" argument allows us to include non-focal QTLs as covariates. This option enables composite interval mapping (Jensen et al. 1993) that considers additional QTL effects. Here is an example using the Col x Kas herbivory data, with the nga8 marker considered a covariate.</p>
-```{r CIM}
+<p>The "addQTL" argument allows us to include non-focal QTLs as covariates. This option enables composite interval mapping (Jensen et al. 1993) that considers additional QTL effects. Here is an example code using the Col x Kas herbivory data, with the nga8 marker considered a covariate.</p>
+```{r CIM, eval=FALSE}
 colkas_cim <- scan_neighbor(genoprobs=colkas_genoprob, 
                             pheno=log(colkas$pheno[,5]+1),
                             contrasts=c(TRUE,FALSE,TRUE),
@@ -107,8 +106,8 @@ plot_nei(colkas_cim)
 ```
 
 ### *3. Epistasis in neighbor QTL effects*
-<p>For the analysis of epistasis, the "int_neighbor()" calculate LOD score of two-way interactions between a focal marker and the others. Here is an example for the 'nga8' marker in the Col x Kas herbivory data.</p>
-```{r int}
+<p>For the analysis of epistasis, the "int_neighbor()" calculate LOD score of two-way interactions between a focal marker and the others. Here is an example code for the 'nga8' marker in the Col x Kas herbivory data.</p>
+```{r int, eval=FALSE}
 colkas_int <- int_neighbor(genoprobs=colkas_genoprob, 
                            pheno=log(colkas$pheno[,5]+1), 
                            contrasts=c(TRUE,FALSE,TRUE),
@@ -121,8 +120,8 @@ plot_nei(colkas_int, type="int")
 ```
 
 ### *4. Binary traits*
-<p>The "response" argument allows us to analyze "binary" phenotypes as well as "quantitative" traits. This argument calls logistic (mixed) models internally (Faraway 2016; Chen et al. 2016). The "calc_pve()" yields the ratio of phenotypic variation explained (RVE) by neighbor effects as RVE~nei~ =$\sigma^2_2/\sigma^2_1$ when "binary" traits are analyzed, because the logistic mixed model does not compute $\sigma^2_e$ (Perdry & Dandine-Roulland 2020). Here is an example for the analysis of the presence or absence of bolting in Col x Kas RILs.</p>
-```{r bin}
+<p>The "response" argument allows us to analyze "binary" phenotypes as well as "quantitative" traits. This argument calls logistic (mixed) models internally (Faraway 2016; Chen et al. 2016). The "calc_pve()" yields the ratio of phenotypic variation explained (RVE) by neighbor effects as RVE~nei~ =$\sigma^2_2/\sigma^2_1$ when "binary" traits are analyzed, because the logistic mixed model does not compute $\sigma^2_e$ (Perdry & Dandine-Roulland 2020). Here is an example code for the analysis of the presence or absence of bolting in Col x Kas RILs.</p>
+```{r bin, eval=FALSE}
 s_seq <- quantile(dist(smap_colkas),c(0.1*(1:10)))
 colkas_pveBin <- calc_pve(genoprobs=colkas_genoprob, 
                           pheno=colkas$pheno[,7],
@@ -143,7 +142,7 @@ plot_nei(colkas_scanBin)
 
 ### *5. Crossing design*
 <p>The neighbor QTL package is able to handle AB heterozygotes. It also works even when there are only AA or AB genotypes. However, sex chromosomes are not supported currently, and should be excluded before the genome scan. This is a simulation using F2 or backcross lines implemented in the "R/qtl" package.</p>
-```{r fake}
+```{r fake, eval=FALSE}
 #F2 lines
 set.seed(1234)
 data("fake.f2",package="qtl")
@@ -177,7 +176,7 @@ scan_f2 <- scan_neighbor(genoprobs=genoprobs_f2,
 plot_nei(scan_f2)
 ```
 
-```{r bc}
+```{r bc, eval=FALSE}
 #backcross lines
 set.seed(1234)
 data("fake.bc",package="qtl")
@@ -194,7 +193,7 @@ pve_bc <- calc_pve(genoprobs=genoprobs_bc,
                    pheno=nei_eff$nei_y,
                    contrasts=c(TRUE,TRUE,FALSE),
                    smap=smap_bc, s_seq=s_seq[1:5],
-                   addcovar=as.matrix(cbind(fake_bc$pheno$sex,fake_bc$pheno$pgm)),
+                   addcovar=as.matrix(cbind(fake_bc$pheno$sex,fake_bc$pheno$age)),
                    fig=FALSE)
     
 deltaPVE <- pve_bc[,2] - c(0,pve_bc[1:4,2])
@@ -204,7 +203,7 @@ scan_bc <- scan_neighbor(genoprobs=genoprobs_bc,
                          pheno=nei_eff$nei_y,
                          contrasts=c(TRUE,TRUE,FALSE),
                          smap=smap_bc, scale=argmax_s,
-                         addcovar=as.matrix(cbind(fake_bc$pheno$sex,fake_bc$pheno$pgm))
+                         addcovar=as.matrix(cbind(fake_bc$pheno$sex,fake_bc$pheno$age))
                          )
 
 plot_nei(scan_bc)

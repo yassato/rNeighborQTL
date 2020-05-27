@@ -4,19 +4,20 @@ context("decompose_genoprobs")
 colkas <- qtl::read.cross(format="csvs",dir="./",
                           genfile="ColKas_geno.csv",phefile = "ColKas_pheno.csv",
                           na.strings = c("_"), estimate.map=TRUE, crosstype = "riself")
-colkas_genoprob <- qtl::calc.genoprob(colkas, step=2)
+colkas <- colkas[1:2,1:30]
+colkas_genoprob <- qtl::calc.genoprob(colkas, step=4)
 
 #F2
 set.seed(1234)
 data("fake.f2",package="qtl")
-fake_f2 <- fake.f2[1:19,]
-genoprobs_f2 <- qtl::calc.genoprob(fake_f2,step=2)
+fake_f2 <- fake.f2[1:2,1:30]
+genoprobs_f2 <- qtl::calc.genoprob(fake_f2,step=4)
 
 #backcross
 set.seed(1234)
 data("fake.bc",package="qtl")
-fake_bc <- fake.bc[1:19,]
-genoprobs_bc <- qtl::calc.genoprob(fake_bc,step=2)
+fake_bc <- fake.bc[1:2,1:30]
+genoprobs_bc <- qtl::calc.genoprob(fake_bc,step=4)
 
 test_that(
   desc = "prob_sum_1",

@@ -56,7 +56,7 @@ LOD score was compared between models with or without the two-way interaction.
 }
 \examples{
 set.seed(1234)
-test_map <- qtl::sim.map(len=rep(20,5),n.mar=5,include.x=FALSE)
+test_map <- qtl::sim.map(len=rep(20,5),n.mar=3,include.x=FALSE)
 test_cross <- qtl::sim.cross(test_map,n.ind=50)
 test_smap <- cbind(runif(50,1,100),runif(50,1,100))
 test_genoprobs <- qtl::calc.genoprob(test_cross,step=2)
