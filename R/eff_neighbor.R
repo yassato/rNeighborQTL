@@ -175,6 +175,9 @@ eff_neighbor = function(genoprobs, pheno, contrasts=c(TRUE,TRUE,TRUE), smap, sca
   colnames(coeflist) <- c("chr","pos","a1","d1","a2","d2")
 
   if(fig==TRUE) {
+    opar <- graphics::par(no.readonly=TRUE)
+    on.exit(graphics::par(opar))
+
     graphics::par(mfcol=c(2,1))
     plot_eff(res=coeflist, type="self")
     plot_eff(res=coeflist, type="neighbor")
