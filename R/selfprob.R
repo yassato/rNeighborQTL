@@ -11,10 +11,10 @@
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 selfprob = function(i, a1, d1, AA, AB, BB) {
   if(is.na(AB)[1]==TRUE) {
-    return(t(a1*t(BB[i,,drop=F])-a1*t(AA[i,,drop=F])))
+    return(a1*BB[i,]-a1*AA[i,])
   } else if(is.na(BB)[1]==TRUE) {
-    return(t(d1*t(AB[i,,drop=F])-a1*t(AA[i,,drop=F])))
+    return(d1*AB[i,]-a1*AA[i,])
   } else {
-    return(t(a1*t(BB[i,,drop=F])+d1*t(AB[i,,drop=F])-a1*t(AA[i,,drop=F])))
+    return(a1*BB[i,]+d1*AB[i,]-a1*AA[i,])
   }
 }
