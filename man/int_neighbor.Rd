@@ -7,22 +7,20 @@
 int_neighbor(
   genoprobs,
   pheno,
-  contrasts = c(TRUE, TRUE, TRUE),
   smap,
   scale,
   addcovar = NULL,
   addQTL,
   intQTL,
   grouping = rep(1, nrow(smap)),
-  response = "quantitative"
+  response = c("quantitative", "binary"),
+  contrasts = NULL
 )
 }
 \arguments{
 \item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 
 \item{pheno}{A vector of individual phenotypes.}
-
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 
 \item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial positions along an x-axis and y-axis, respectively.}
 
@@ -37,6 +35,8 @@ int_neighbor(
 \item{grouping}{An optional integer vector assigning each individual to a group. This argument can be used when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
 
 \item{response}{An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} calls the \code{"gaussian"} or \code{"binomial"} family in \code{glm()}, respectively.}
+
+\item{contrasts}{An optional vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB. If \code{NULL}, it is compiled from \code{genoprobs} automatically.}
 }
 \value{
 A matrix of LOD scores for neighbor epistasis effects, with the chromosome numbers and positions. The row names correspond to marker names.

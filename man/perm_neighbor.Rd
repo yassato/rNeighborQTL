@@ -7,26 +7,24 @@
 perm_neighbor(
   genoprobs,
   pheno,
-  contrasts = c(TRUE, TRUE, TRUE),
   smap,
   scale,
   addcovar = NULL,
   addQTL = NULL,
   intQTL = NULL,
   grouping = rep(1, nrow(smap)),
-  response = "quantitative",
-  type = "neighbor",
+  response = c("quantitative", "binary"),
+  type = c("neighbor", "self", "int"),
   times = 99,
   p_val = 0.05,
-  n_core = 1L
+  n_core = 1L,
+  contrasts = NULL
 )
 }
 \arguments{
 \item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 
 \item{pheno}{A vector of individual phenotypes.}
-
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 
 \item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial positions along an x-axis and y-axis, respectively.}
 
@@ -49,6 +47,8 @@ perm_neighbor(
 \item{p_val}{A vector indicating upper quantiles for permutation LOD scores}
 
 \item{n_core}{No. of cores for a parallel computation. This does not work for Windows OS. Default is a single-core computation.}
+
+\item{contrasts}{An optional vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB. If \code{NULL}, it is compiled from \code{genoprobs} automatically.}
 }
 \value{
 LOD thresholds at given quantiles by \code{p-val}

@@ -3,7 +3,6 @@
 #' A function to test interaction terms between one focal marker and the other markers across a genome.
 #' @param genoprobs Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.
 #' @param pheno A vector of individual phenotypes.
-#' @param contrasts A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.
 #' @param smap A matrix showing a spatial map for individuals. The first and second column include spatial positions along an x-axis and y-axis, respectively.
 #' @param scale A numeric scalar indicating the maximum spatial distance between a focal individual and neighbors to define neighbor effects.
 #' @param addcovar An optional matrix including additional non-genetic covariates. It contains no. of individuals x no. of covariates.
@@ -11,6 +10,7 @@
 #' @param intQTL A name of a focal marker to be tested for its epistasis with the other markers in neighbor effects. The marker name must be included by \code{addQTL}.
 #' @param grouping An optional integer vector assigning each individual to a group. This argument can be used when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.
 #' @param response An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} calls the \code{"gaussian"} or \code{"binomial"} family in \code{glm()}, respectively.
+#' @param contrasts An optional vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB. If \code{NULL}, it is compiled from \code{genoprobs} automatically.
 #' @return A matrix of LOD scores for neighbor epistasis effects, with the chromosome numbers and positions. The row names correspond to marker names.
 #' \itemize{
 #'  \item{\code{chr}} {Chromosome number}
@@ -37,7 +37,8 @@
 #'                          )
 #' plot_nei(test_int, type="int")
 #' @export
-int_neighbor = function(genoprobs, pheno, contrasts = c(TRUE, TRUE, TRUE), smap, scale, addcovar=NULL, addQTL, intQTL, grouping=rep(1,nrow(smap)), response="quantitative") {
+int_neighbor = function(genoprobs, pheno, smap, scale, addcovar=NULL, addQTL, intQTL, grouping=rep(1,nrow(smap)), response=c("quantitative","binary"), contrasts=NULL) {
+  response <- match.arg(response)
 
   if(is.na(match(intQTL, addQTL))) {
     warning("A 'intQTL' marker must overlap with 'addQTL'")
@@ -45,40 +46,20 @@ int_neighbor = function(genoprobs, pheno, contrasts = c(TRUE, TRUE, TRUE), smap,
   }
 
   switch(response,
-         "quantitative" = glm_family <- "gaussian",
-         "binary" = glm_family <- "binomial",
-         stop("error: response must be 'quantitative' or 'binary'")
+         "quantitative" = glm_family <- stats::gaussian(),
+         "binary" = glm_family <- stats::binomial()
   )
 
   p <- dim(genoprobs$geno[[1]]$prob)[1]
   geno <- decompose_genoprobs(genoprobs=genoprobs,contrasts=contrasts)
+  contrasts <- attr(geno, "contrasts")
 
   scan_effect <- eff_neighbor(genoprobs=genoprobs, pheno=pheno, contrasts=contrasts, smap=smap, scale=scale, addcovar=addcovar, addQTL=addQTL, grouping=grouping, response=response, fig=FALSE)
   q <- nrow(scan_effect)
   p <- dim(genoprobs$geno[[1]]$prob)[1]
 
-  y_self_hat <- c()
-  for(i in 1:p) y_self_hat <- rbind(y_self_hat, selfprob(i, a1=scan_effect$a1, d1=scan_effect$d1, AA=geno$AA, AB=geno$AB, BB=geno$BB))
-
-  neiprob_i = function(i) {
-    id = c(1:p)[grouping == grouping[i]]
-
-    d_i = mapply(function(x) { return(sqrt((smap[x,1]-smap[i,1])^2 + (smap[x,2]-smap[i,2])^2)) },id)
-    prob_i = 0
-    j_id = id[(d_i>0)&(d_i<=scale)]
-    if(length(j_id)==0) {
-      return(rep(0,ncol(geno$AA)))
-    } else {
-      for(j in j_id){
-        prob_ij = neiprob(i=i, j=j, a2=scan_effect$a2, d2=scan_effect$d2, AA=geno$AA, AB=geno$AB, BB=geno$BB)
-        prob_i = prob_i + prob_ij
-      }
-      prob_i = prob_i/length(j_id)
-      return(prob_i)
-    }
-  }
-  y_nei_hat <- mapply(neiprob_i, 1:p)
-  y_nei_hat <- t(y_nei_hat)
+  y_self_hat <- genoprobs2selfprobs(geno, a1=scan_effect$a1, d1=scan_effect$d1)
+  y_nei_hat <- calc_neiprob(geno, a2=scan_effect$a2, d2=scan_effect$d2, smap=smap, scale=scale, grouping=grouping)
 
   X <- cbind(y_self_hat[,match(addQTL, rownames(scan_effect))], y_nei_hat[,match(addQTL, rownames(scan_effect))])
   int <- cbind(y_self_hat[,match(intQTL, rownames(scan_effect))], y_nei_hat[,match(intQTL, rownames(scan_effect))])
@@ -86,15 +67,15 @@ int_neighbor = function(genoprobs, pheno, contrasts = c(TRUE, TRUE, TRUE), smap,
   if(is.null(addcovar)==FALSE) {
     LOD_int <- c()
     for(k in 1:q) {
-      LL_nei <- stats::logLik(stats::glm(pheno~addcovar+X+y_self_hat[,k]+y_self_hat[,k]:int[,1]+y_nei_hat[,k], family=glm_family))
-      LL_int <- stats::logLik(stats::glm(pheno~addcovar+X+y_self_hat[,k]+y_self_hat[,k]:int[,1]+y_nei_hat[,k]+y_nei_hat[,k]:int[,2], family=glm_family))
+      LL_nei <- logLik_glm.fit(cbind(1,addcovar,X,y_self_hat[,k],y_nei_hat[,k],y_self_hat[,k]*int[,1]),pheno,family=glm_family)
+      LL_int <- logLik_glm.fit(cbind(1,addcovar,X,y_self_hat[,k],y_nei_hat[,k],y_self_hat[,k]*int[,1],y_nei_hat[,k]*int[,2]),pheno,family=glm_family)
       LOD_int <- c(LOD_int, log10(exp(LL_int-LL_nei)))
     }
   } else if(is.null(addcovar)==TRUE) {
     LOD_int <- c()
     for(k in 1:q) {
-      LL_nei <- stats::logLik(stats::glm(pheno~X+y_self_hat[,k]+y_self_hat[,k]:int[,1]+y_nei_hat[,k], family=glm_family))
-      LL_int <- stats::logLik(stats::glm(pheno~X+y_self_hat[,k]+y_self_hat[,k]:int[,1]+y_nei_hat[,k]+y_nei_hat[,k]:int[,2], family=glm_family))
+      LL_nei <- logLik_glm.fit(cbind(1,X,y_self_hat[,k],y_nei_hat[,k],y_self_hat[,k]*int[,1]),pheno,family=glm_family)
+      LL_int <- logLik_glm.fit(cbind(1,X,y_self_hat[,k],y_nei_hat[,k],y_self_hat[,k]*int[,1],y_nei_hat[,k]*int[,2]),pheno,family=glm_family)
       LOD_int <- c(LOD_int, log10(exp(LL_int-LL_nei)))
     }
   }

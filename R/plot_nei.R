@@ -12,7 +12,8 @@
 #' In this case, the \code{res} object and \code{type} must match, otherwise it returns an error message.
 #' @seealso \code{\link{scan_neighbor}} \code{\link{int_neighbor}} \code{\link{perm_neighbor}}
 #' @export
-plot_nei = function(res, type="neighbor", chr=NULL, th=NULL, ...) {
+plot_nei = function(res, type=c("neighbor","self","int"), chr=NULL, th=NULL, ...) {
+  type <- match.arg(type)
 
   if(is.null(chr)==FALSE) {
     res = res[res$chr==chr,]

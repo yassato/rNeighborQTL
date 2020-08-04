@@ -4,12 +4,12 @@
 \alias{decompose_genoprobs}
 \title{Decomposition of conditional genotype probabilities}
 \usage{
-decompose_genoprobs(genoprobs, contrasts = c(TRUE, TRUE, TRUE))
+decompose_genoprobs(genoprobs, contrasts = NULL)
 }
 \arguments{
 \item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
+\item{contrasts}{A vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 }
 \value{
 A list of three numeric matrices for genotype probabilities AA, AB, and BB. Each contains elements of individuals x markers.

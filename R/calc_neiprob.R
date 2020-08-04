@@ -11,31 +11,30 @@
 #' @param d2sq0 An option to make AB/AB interaction effects zero.
 #' @return A numeric matrix containing individuals x marker elements for neighbor QTL effects.
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
-calc_neiprob = function(genoprobs, a2, d2, contrasts=c(TRUE,TRUE,TRUE), smap, scale, grouping=rep(1,nrow(smap)), d2sq0=FALSE) {
-  p <- dim(genoprobs$geno[[1]]$prob)[1]
-  geno <- decompose_genoprobs(genoprobs=genoprobs, contrasts=contrasts)
+calc_neiprob = function(genoprobs, a2, d2, contrasts=NULL, smap, scale, grouping=rep(1,nrow(smap)), d2sq0=FALSE) {
+  if (inherits(genoprobs, "cross")) {
+    geno <- decompose_genoprobs(genoprobs=genoprobs, contrasts=contrasts)
+  } else {
+    geno <- genoprobs
+  }
+  p <- dim(geno$AA)[1]
 
   neiprob_i <- function(i) {
     id <- c(1:p)[grouping == grouping[i]]
 
-    d_i <- mapply(function(x) { return(sqrt((smap[x,1]-smap[i,1])^2 + (smap[x,2]-smap[i,2])^2)) },id)
-    prob_i <- 0
+    d_i <- sqrt((smap[id,1]-smap[i,1])^2 + (smap[id,2]-smap[i,2])^2)
     j_id <- id[(d_i>0)&(d_i<=scale)]
     if(length(j_id)==0) {
       return(rep(0,ncol(geno$AA)))
     } else {
-      for(j in j_id){
-        prob_ij <- neiprob(i=i, j=j, a2=a2, d2=d2, AA=geno$AA, AB=geno$AB, BB=geno$BB, d2sq0=d2sq0)
-        prob_i <- prob_i + prob_ij
-      }
+      prob_i <- neiprob(i=i, j=j_id, a2=a2, d2=d2, AA=geno$AA, AB=geno$AB, BB=geno$BB, d2sq0=d2sq0)
       prob_i <- prob_i/length(j_id)
       return(prob_i)
     }
   }
-  neiList <- mapply(neiprob_i, 1:p)
-  neiList <- t(neiList)
+  neiList <- do.call(rbind, lapply(1:p, neiprob_i))
 
-  marker_info <- get_markers(genoprobs=genoprobs)
-  colnames(neiList) <- rownames(marker_info)
+  colnames(neiList) <- rownames(attr(geno,"marker_info"))
+  attr(neiList, "contrasts") <- attr(geno, "contrasts")
   return(neiList)
 }

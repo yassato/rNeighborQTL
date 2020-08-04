@@ -4,7 +4,7 @@
 \alias{plot_nei}
 \title{Plot LOD score for self or neighbor QTL effects}
 \usage{
-plot_nei(res, type = "neighbor", chr = NULL, th = NULL, ...)
+plot_nei(res, type = c("neighbor", "self", "int"), chr = NULL, th = NULL, ...)
 }
 \arguments{
 \item{res}{Output results of \code{scan_neighbor()}.}

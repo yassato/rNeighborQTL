@@ -4,7 +4,7 @@
 \alias{plot_eff}
 \title{Plot self and neighbor QTL effects across a genome}
 \usage{
-plot_eff(res, type = "neighbor")
+plot_eff(res, type = c("neighbor", "self"))
 }
 \arguments{
 \item{res}{Output results of \code{eff_neighbor()}.}

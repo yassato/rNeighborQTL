@@ -4,7 +4,7 @@
 \alias{genoprobs2selfprobs}
 \title{Calculating a set of self QTL effects from conditional genotype probabilities}
 \usage{
-genoprobs2selfprobs(genoprobs, a1, d1, contrasts = c(TRUE, TRUE, TRUE))
+genoprobs2selfprobs(genoprobs, a1, d1, contrasts = NULL)
 }
 \arguments{
 \item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
@@ -13,7 +13,7 @@ genoprobs2selfprobs(genoprobs, a1, d1, contrasts = c(TRUE, TRUE, TRUE))
 
 \item{d1}{A numeric scalar indicating dominance deviation.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
+\item{contrasts}{A vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 }
 \value{
 A numeric matrix containing individuals x marker elements for self QTL effects.

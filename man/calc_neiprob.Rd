@@ -8,7 +8,7 @@ calc_neiprob(
   genoprobs,
   a2,
   d2,
-  contrasts = c(TRUE, TRUE, TRUE),
+  contrasts = NULL,
   smap,
   scale,
   grouping = rep(1, nrow(smap)),

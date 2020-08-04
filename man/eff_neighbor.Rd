@@ -7,22 +7,20 @@
 eff_neighbor(
   genoprobs,
   pheno,
-  contrasts = c(TRUE, TRUE, TRUE),
   smap,
   scale,
   addcovar = NULL,
   addQTL = NULL,
   grouping = rep(1, nrow(smap)),
-  response = "quantitative",
-  fig = TRUE
+  response = c("quantitative", "binary"),
+  fig = TRUE,
+  contrasts = NULL
 )
 }
 \arguments{
 \item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 
 \item{pheno}{A vector of individual phenotypes.}
-
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 
 \item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial position along an x-axis and y-axis, respectively.}
 
@@ -37,6 +35,8 @@ eff_neighbor(
 \item{response}{An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} calls the \code{"gaussian"} or \code{"binomial"} family in \code{glm()}, respectively.}
 
 \item{fig}{TRUE/FALSE to plot the effects or not.}
+
+\item{contrasts}{An optional vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB. If \code{NULL}, it is compiled from \code{genoprobs} automatically.}
 }
 \value{
 A matrix of estimated additive and dominance deviation for self and neighbor effects, with the chromosome numbers and positions. The row names correspond to marker names.
@@ -67,7 +67,6 @@ test_genoprobs <- qtl::calc.genoprob(test_cross,step=2)
 
 test_eff <- eff_neighbor(genoprobs=test_genoprobs,
                          pheno=test_cross$pheno$phenotype,
-                         contrasts=c(TRUE,TRUE,TRUE),
                          smap=test_smap, scale=20, fig=TRUE
                          )
 }

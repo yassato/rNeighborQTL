@@ -3,7 +3,6 @@
 #' A function to calculate a genome-wide LOD threshold using permutation tests for self or neighbor effects.
 #' @param genoprobs Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.
 #' @param pheno A vector of individual phenotypes.
-#' @param contrasts A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.
 #' @param smap A matrix showing a spatial map for individuals. The first and second column include spatial positions along an x-axis and y-axis, respectively.
 #' @param scale A numeric scalar indicating the maximum spatial distance between a focal individual and neighbors to define neighbor effects.
 #' @param addcovar An optional matrix including additional non-genetic covariates. It contains no. of individuals x no. of covariates.
@@ -15,6 +14,7 @@
 #' @param p_val A vector indicating upper quantiles for permutation LOD scores
 #' @param type Select \code{"self"}, \code{"neighbor"}, or \code{"int"} to perform permutation tests for self effects, neighbor effects, or neighbor epistasis, respectively.
 #' @param n_core No. of cores for a parallel computation. This does not work for Windows OS. Default is a single-core computation.
+#' @param contrasts An optional vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB. If \code{NULL}, it is compiled from \code{genoprobs} automatically.
 #' @return LOD thresholds at given quantiles by \code{p-val}
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 #' @seealso \code{\link{plot_nei}} \code{\link{scan_neighbor}} \code{\link{int_neighbor}}
@@ -32,16 +32,16 @@
 #'                            times=3, p_val=c(1.0,0.5)
 #'                            )
 #' @export
-perm_neighbor = function(genoprobs, pheno, contrasts=c(TRUE,TRUE,TRUE), smap, scale, addcovar=NULL, addQTL=NULL, intQTL=NULL, grouping=rep(1,nrow(smap)), response="quantitative", type="neighbor", times=99, p_val=0.05, n_core=1L) {
+perm_neighbor = function(genoprobs, pheno, smap, scale, addcovar=NULL, addQTL=NULL, intQTL=NULL, grouping=rep(1,nrow(smap)), response=c("quantitative","binary"), type=c("neighbor","self","int"), times=99, p_val=0.05, n_core=1L, contrasts=NULL) {
+  response <-match.arg(response)
+  type <- match.arg(type)
 
   if(type=="self") {
     func = function(x) return(max(scan_neighbor(genoprobs=genoprobs, pheno=sample(pheno), smap=smap, scale=scale, contrasts=contrasts, addcovar=addcovar, addQTL=addQTL, grouping=grouping, response=response)$LOD_self))
   } else if(type=="neighbor") {
     func = function(x) return(max(scan_neighbor(genoprobs=genoprobs, pheno=sample(pheno), smap=smap, scale=scale, contrasts=contrasts, addcovar=addcovar, addQTL=addQTL, grouping=grouping, response=response)$LOD_nei))
-  } else if(type=="int") {
+  } else { #if(type=="int") {
     func = function(x) return(max(int_neighbor(genoprobs=genoprobs, pheno=sample(pheno), smap=smap, scale=scale, contrasts=contrasts, addcovar=addcovar, addQTL=addQTL, intQTL=intQTL, grouping=grouping, response=response)$LOD_int))
-  } else {
-    stop("error: type must be 'self', 'neighbor', or 'int'")
   }
 
   res = parallel::mcmapply(func, 1:times, mc.cores=getOption("mc.cores",n_core))

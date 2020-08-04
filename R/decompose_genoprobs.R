@@ -2,7 +2,7 @@
 #'
 #' A function to decompose \code{qtl}'s object of conditional genotype probabilities.
 #' @param genoprobs Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.
-#' @param contrasts A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.
+#' @param contrasts A vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.
 #' @return A list of three numeric matrices for genotype probabilities AA, AB, and BB. Each contains elements of individuals x markers.
 #' \itemize{
 #'  \item{\code{AA}} {Homozygote AA probabilities.}
@@ -10,12 +10,19 @@
 #'  \item{\code{BB}} {Homozygote BB probabilities. NA if backcross lines}
 #' }
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
-decompose_genoprobs = function(genoprobs, contrasts=c(TRUE,TRUE,TRUE)) {
+decompose_genoprobs = function(genoprobs, contrasts=NULL) {
   p <- dim(genoprobs$geno[[1]]$prob)[1]
-  r <- dim(genoprobs$geno[[1]]$prob)[3]
 
-  if(r!=sum(contrasts)) {
-    stop("error: allele dimension does not match!")
+  if (is.null(contrasts)) {
+    if (!all(dimnames(genoprobs$geno[[1]]$prob)[[3]] %in% c("AA", "AB", "BB"))) {
+      stop("error: genoprobs type error!")
+    }
+    contrasts = c("AA", "AB", "BB") %in% dimnames(genoprobs$geno[[1]]$prob)[[3]]
+  } else {
+    r <- dim(genoprobs$geno[[1]]$prob)[3]
+    if(r!=sum(contrasts)) {
+      stop("error: allele dimension does not match!")
+    }
   }
 
   geno <- c()
@@ -58,5 +65,7 @@ decompose_genoprobs = function(genoprobs, contrasts=c(TRUE,TRUE,TRUE)) {
   geno[[3]] <- BB
 
   names(geno) <- c("AA","AB","BB")
+  attr(geno, "contrasts") <- contrasts
+  attr(geno, "marker_info") <- get_markers(genoprobs=genoprobs)
   return(geno)
 }

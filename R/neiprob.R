@@ -13,21 +13,26 @@
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 neiprob = function(i, j, a2, d2, AA, AB, BB, d2sq0=FALSE) {
   if(is.na(AB)[1]==TRUE) {
-    AAi <- (a2^2)*AA[i,]*AA[j,]-(a2^2)*AA[i,]*BB[j,]
-    BBi <- (a2^2)*BB[i,]*BB[j,]-(a2^2)*BB[i,]*AA[j,]
-    return(AAi+BBi)
+    AAi <- (a2^2)*AA[i,]*t(AA[j,,drop=F])-(a2^2)*AA[i,]*t(BB[j,,drop=F])
+    ABi <- 0
+    BBi <- (a2^2)*BB[i,]*t(BB[j,,drop=F])-(a2^2)*BB[i,]*t(AA[j,,drop=F])
   } else if(is.na(BB)[1]==TRUE) {
-    AAi <- (a2^2)*AA[i,]*AA[j,]+a2*d2*AA[i,]*AB[j,]
-    ABi <- a2*d2*AB[i,]*AA[j,]+(d2^2)*AB[i,]*AB[j,]
-    return(AAi+ABi)
+    AAi <- (a2^2)*AA[i,]*t(AA[j,,drop=F])+a2*d2*AA[i,]*t(AB[j,,drop=F])
+    ABi <- a2*d2*AB[i,]*t(AA[j,,drop=F])+(d2^2)*AB[i,]*t(AB[j,,drop=F])
+    BBi <- 0
   } else {
-    AAi <- (a2^2)*AA[i,]*AA[j,]+a2*d2*AA[i,]*AB[j,]-(a2^2)*AA[i,]*BB[j,]
+    AAi <- (a2^2)*AA[i,]*t(AA[j,,drop=F])+a2*d2*AA[i,]*t(AB[j,,drop=F])-(a2^2)*AA[i,]*t(BB[j,,drop=F])
     if(d2sq0==TRUE) {
-      ABi <- a2*d2*AB[i,]*AA[j,]+0*AB[i,]*AB[j,]-a2*d2*AB[i,]*BB[j,]
+      ABi <- a2*d2*AB[i,]*t(AA[j,,drop=F])+0*AB[i,]*t(AB[j,,drop=F])-a2*d2*AB[i,]*t(BB[j,,drop=F])
     } else {
-      ABi <- a2*d2*AB[i,]*AA[j,]+(d2^2)*AB[i,]*AB[j,]-a2*d2*AB[i,]*BB[j,]
+      ABi <- a2*d2*AB[i,]*t(AA[j,,drop=F])+(d2^2)*AB[i,]*t(AB[j,,drop=F])-a2*d2*AB[i,]*t(BB[j,,drop=F])
     }
-    BBi <- (a2^2)*BB[i,]*BB[j,]-a2*d2*BB[i,]*AB[j,]-(a2^2)*BB[i,]*AA[j,]
-    return(AAi+ABi+BBi)
+    BBi <- (a2^2)*BB[i,]*t(BB[j,,drop=F])-a2*d2*BB[i,]*t(AB[j,,drop=F])-(a2^2)*BB[i,]*t(AA[j,,drop=F])
   }
+  Z <- AAi+ABi+BBi
+  s <- 0
+  for (k in 1L:ncol(Z)) {
+    s <- s + Z[,k]
+  }
+  return(s)
 }

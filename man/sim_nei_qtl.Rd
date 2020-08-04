@@ -8,11 +8,11 @@ sim_nei_qtl(
   genoprobs,
   a2,
   d2,
-  contrasts = c(TRUE, TRUE, TRUE),
   smap,
   scale,
   grouping = rep(1, nrow(smap)),
-  n_QTL = 1
+  n_QTL = 1,
+  contrasts = NULL
 )
 }
 \arguments{
@@ -22,8 +22,6 @@ sim_nei_qtl(
 
 \item{d2}{A numeric scalar indicating dominance deviation.}
 
-\item{contrasts}{A vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
-
 \item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial positions along an x-axis and y-axis, respectively.}
 
 \item{scale}{A numeric scalar indicating the maximum spatial distance between a focal individual and neighbors to define neighbor effects.}
@@ -31,6 +29,8 @@ sim_nei_qtl(
 \item{grouping}{An integer vector assigning each individual to a group. This argument can be used when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.}
 
 \item{n_QTL}{A positive integer indicating the number of causal markers.}
+
+\item{contrasts}{An optional vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB. If \code{NULL}, it is compiled from \code{genoprobs} automatically.}
 }
 \value{
 A numeric matrix containing individuals x marker elements for neighbor QTL effects.
@@ -54,12 +54,11 @@ test_smap <- cbind(runif(50,1,100),runif(50,1,100))
 test_genoprobs <- qtl::calc.genoprob(test_cross,step=2)
 
 nei_eff <- sim_nei_qtl(genoprobs=test_genoprobs, a2=0.5, d2=0.5,
-                       contrasts=c(TRUE,TRUE,TRUE), smap=test_smap,
+                       smap=test_smap,
                        scale=20, n_QTL=1)
 
 test_scan <- scan_neighbor(genoprobs=test_genoprobs,
                            pheno=nei_eff$nei_y,
-                           contrasts=c(TRUE,TRUE,TRUE),
                            smap=test_smap, scale=20
                            )
 plot_nei(test_scan)

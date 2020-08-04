@@ -7,21 +7,19 @@
 calc_pve(
   genoprobs,
   pheno,
-  contrasts = c(TRUE, TRUE, TRUE),
   smap,
   s_seq,
   addcovar = NULL,
   grouping = rep(1, nrow(smap)),
-  response = "quantitative",
-  fig = TRUE
+  response = c("quantitative", "binary"),
+  fig = TRUE,
+  contrasts = NULL
 )
 }
 \arguments{
 \item{genoprobs}{Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.}
 
 \item{pheno}{A vector of individual phenotypes.}
-
-\item{contrasts}{A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.}
 
 \item{smap}{A matrix showing a spatial map for individuals. The first and second column include spatial positions along an x-axis and y-axis, respectively.}
 
@@ -34,6 +32,8 @@ calc_pve(
 \item{response}{An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} applies the \code{"lmm.aireml()"} or \code{"logistic.mm.aireml()"} for a mixed model, respectively.}
 
 \item{fig}{TRUE/FALSE to add a figure of Delta PVE or not.}
+
+\item{contrasts}{An optional vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB. If \code{NULL}, it is compiled from \code{genoprobs} automatically.}
 }
 \value{
 A matrix containing the maximum neighbor distance, phenotypic variation explained by neighbor effects, and p-value by a likelihood ratio test.
@@ -63,7 +63,6 @@ s_seq <- quantile(dist(test_smap),c(0.1*(1:10)))
 test_pve <- calc_pve(genoprobs=test_genoprobs,
                      pheno=test_cross$pheno$phenotype,
                      smap=test_smap, s_seq=s_seq,
-                     contrasts=c(TRUE,TRUE,TRUE),
                      )
 }
 \references{

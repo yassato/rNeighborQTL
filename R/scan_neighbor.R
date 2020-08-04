@@ -10,6 +10,7 @@
 #' @param addQTL An optional vector containing marker names that are considered covariates. Namely, this option allows composite interval mapping (Jansen 1993).
 #' @param grouping An optional integer vector assigning each individual to a group. This argument can be used when \code{smap} contains different experimental replicates. Default setting means that all individuals are belong to a single group.
 #' @param response An optional argument to select trait types. The \code{"quantitative"} or \code{"binary"} calls the \code{"gaussian"} or \code{"binomial"} family in \code{glm()}, respectively.
+#' @param contrasts An optional vector composed of three TRUE/FALSE values, which represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB. If \code{NULL}, it is compiled from \code{genoprobs} automatically.
 #' @return A matrix of LOD scores for self and neighbor effects, with the chromosome numbers and positions. The row names correspond to marker names.
 #' \itemize{
 #'  \item{\code{chr}} {Chromosome number}
@@ -35,49 +36,28 @@
 #'
 #' test_scan <- scan_neighbor(genoprobs=test_genoprobs,
 #'                            pheno=test_cross$pheno$phenotype,
-#'                            contrasts=c(TRUE,TRUE,TRUE),
 #'                            smap=test_smap, scale=20
 #'                            )
 #' plot_nei(test_scan)
 #' @export
-scan_neighbor = function(genoprobs, pheno, contrasts=c(TRUE,TRUE,TRUE), smap, scale, addcovar=NULL, addQTL=NULL, grouping=rep(1,nrow(smap)), response="quantitative") {
+scan_neighbor = function(genoprobs, pheno, smap, scale, addcovar=NULL, addQTL=NULL, grouping=rep(1,nrow(smap)), response=c("quantitative","binary"), contrasts=NULL) {
+  response <- match.arg(response)
 
   switch(response,
-         "quantitative" = glm_family <- "gaussian",
-         "binary" = glm_family <- "binomial",
-         stop("error: response must be 'quantitative' or 'binary'")
+         "quantitative" = glm_family <- stats::gaussian(),
+         "binary" = glm_family <- stats::binomial()
   )
 
   p <- dim(genoprobs$geno[[1]]$prob)[1]
   geno <- decompose_genoprobs(genoprobs=genoprobs,contrasts=contrasts)
+  contrasts <- attr(geno, "contrasts")
 
   scan_effect <- eff_neighbor(genoprobs=genoprobs, pheno=pheno, contrasts=contrasts, smap=smap, scale=scale, addcovar=addcovar, addQTL=addQTL, grouping=grouping, response=response, fig=FALSE)
   q <- nrow(scan_effect)
   p <- dim(genoprobs$geno[[1]]$prob)[1]
 
-  y_self_hat <- c()
-  for(i in 1:p) y_self_hat <- rbind(y_self_hat, selfprob(i, a1=scan_effect$a1, d1=scan_effect$d1, AA=geno$AA, AB=geno$AB, BB=geno$BB))
-
-  neiprob_i = function(i) {
-    id = c(1:p)[grouping == grouping[i]]
-
-    d_i = mapply(function(x) { return(sqrt((smap[x,1]-smap[i,1])^2 + (smap[x,2]-smap[i,2])^2)) },id)
-    prob_i = 0
-    j_id = id[(d_i>0)&(d_i<=scale)]
-    if(length(j_id)==0) {
-      return(rep(0,ncol(geno$AA)))
-    } else {
-      for(j in j_id){
-        prob_ij = neiprob(i=i, j=j, a2=scan_effect$a2, d2=scan_effect$d2, AA=geno$AA, AB=geno$AB, BB=geno$BB)
-        prob_i = prob_i + prob_ij
-      }
-      prob_i = prob_i/length(j_id)
-      return(prob_i)
-    }
-  }
-
-  y_nei_hat <- mapply(neiprob_i, 1:p)
-  y_nei_hat <- t(y_nei_hat)
+  y_self_hat <- genoprobs2selfprobs(geno, a1=scan_effect$a1, d1=scan_effect$d1)
+  y_nei_hat <- calc_neiprob(geno, a2=scan_effect$a2, d2=scan_effect$d2, smap=smap, scale=scale, grouping=grouping)
 
   X <- c()
   if(is.null(addcovar)==FALSE) {
@@ -89,29 +69,29 @@ scan_neighbor = function(genoprobs, pheno, contrasts=c(TRUE,TRUE,TRUE), smap, sc
 
   if(is.null(addcovar)&is.null(addQTL)) {
     LOD_self <- c(); LOD_nei <- c()
-    LL_null <- stats::logLik(stats::glm(pheno~1, family=glm_family))
+    LL_null <- logLik_glm.fit(rep(1,length(pheno)),pheno,family=glm_family)
     for(k in 1:q) {
-      LL_self <- stats::logLik(stats::glm(pheno~y_self_hat[,k], family=glm_family))
-      LL_nei <- stats::logLik(stats::glm(pheno~y_self_hat[,k]+y_nei_hat[,k], family=glm_family))
+      LL_self <- logLik_glm.fit(cbind(1,y_self_hat[,k]),pheno,family=glm_family)
+      LL_nei <- logLik_glm.fit(cbind(1,y_self_hat[,k],y_nei_hat[,k]),pheno,family=glm_family)
       LOD_self <- c(LOD_self, log10(exp(LL_self-LL_null)))
       LOD_nei <- c(LOD_nei, log10(exp(LL_nei-LL_self)))
     }
   } else if(is.null(addQTL)==TRUE) {
     LOD_self <- c(); LOD_nei <- c()
-    LL_null <- stats::logLik(stats::glm(pheno~X, family=glm_family))
+    LL_null <- logLik_glm.fit(cbind(1,X),pheno,family=glm_family)
     for(k in 1:q) {
-      LL_self <- stats::logLik(stats::glm(pheno~X+y_self_hat[,k], family=glm_family))
-      LL_nei <- stats::logLik(stats::glm(pheno~X+y_self_hat[,k]+y_nei_hat[,k], family=glm_family))
+      LL_self <- logLik_glm.fit(cbind(1,X,y_self_hat[,k]),pheno,family=glm_family)
+      LL_nei <- logLik_glm.fit(cbind(1,X,y_self_hat[,k],y_nei_hat[,k]),pheno,family=glm_family)
       LOD_self <- c(LOD_self, log10(exp(LL_self-LL_null)))
       LOD_nei <- c(LOD_nei, log10(exp(LL_nei-LL_self)))
     }
   } else {
     X <- cbind(y_self_hat[,match(addQTL, rownames(scan_effect))], y_nei_hat[,match(addQTL, rownames(scan_effect))])
     LOD_self <- c(); LOD_nei <- c()
-    LL_null <- stats::logLik(stats::glm(pheno~X, family=glm_family))
+    LL_null <- logLik_glm.fit(cbind(1,X),pheno,family=glm_family)
     for(k in 1:q) {
-      LL_self <- stats::logLik(stats::glm(pheno~X+y_self_hat[,k], family=glm_family))
-      LL_nei <- stats::logLik(stats::glm(pheno~X+y_self_hat[,k]+y_nei_hat[,k], family=glm_family))
+      LL_self <- logLik_glm.fit(cbind(1,X,y_self_hat[,k]),pheno,family=glm_family)
+      LL_nei <- logLik_glm.fit(cbind(1,X,y_self_hat[,k],y_nei_hat[,k]),pheno,family=glm_family)
       LOD_self <- c(LOD_self, log10(exp(LL_self-LL_null)))
       LOD_nei <- c(LOD_nei, log10(exp(LL_nei-LL_self)))
     }
