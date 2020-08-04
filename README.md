@@ -1,5 +1,6 @@
-# rNeighborQTL
+# rNeighborQTL (version 1.1.0)
 An R package for interval QTL mapping of neighbor effects.  
+Also available via CRAN at https://cran.r-project.org/package=rNeighborQTL.  
 
 ## Installation
 The rNeighborQTL package has not been registered in CRAN yet.  
