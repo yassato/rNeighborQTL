@@ -1,4 +1,4 @@
-# rNeighborQTL (version 1.1.0)
+# rNeighborQTL
 An R package for interval QTL mapping of neighbor effects.  
 
 ## Installation
@@ -11,5 +11,5 @@ Note that the rNeighborQTL requires the following R packages.
 - parallel
 - qtl
 
-## Usage
-Please see *vignette("rNeighborQTL")* after the installation.  
+## Release Note  
+
