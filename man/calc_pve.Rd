@@ -39,8 +39,9 @@ calc_pve(
 A matrix containing the maximum neighbor distance, phenotypic variation explained by neighbor effects, and p-value by a likelihood ratio test.
 \itemize{
 \item{\code{scale}} {Maximum neighbor distance given as an argument}
+\item{\code{Var_self}} {Proportion or ratio of phenotypic variation explained (PVE or RVE) by self-genotype effects for linear or logistic mixed models, respectively}
 \item{\code{Var_nei}} {Proportion or ratio of phenotypic variation explained (PVE or RVE) by neighbor effects for linear or logistic mixed models, respectively}
-\item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects}
+\item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects. Self effects are tested when the scale is zero}
 }
 }
 \description{
@@ -48,8 +49,8 @@ A function to calculate the proportion or ratio of phenotypic variation explaine
 }
 \details{
 This function calls linear or logistic mixed models via the \code{gaston} package (Perdry & Dandine-Roulland 2020).
-If \code{"binary"} is selected, \code{Var_nei} in the output is given by the proportion of phenotypic variation explained (PVE) by neighbor effects as PVEnei =\eqn{\sigma^2_2/(\sigma^2_1+\sigma^2_2+\sigma^2_e)}.
-If \code{"binary"} is selected, \code{Var_nei} is given by the ratio of phenotypic variation explained (RVE) by neighbor effects as RVEnei =\eqn{\sigma^2_2/\sigma^2_1} and p-values are not available.
+If \code{"quantitative"} is selected, \code{Var_self} or \code{Var_nei} in the output is given by the proportion of phenotypic variation explained (PVE) by neighbor effects as PVEnei =\eqn{\sigma^2_2/(\sigma^2_1+\sigma^2_2+\sigma^2_e)}.
+If \code{"binary"} is selected, \code{Var_self} or \code{Var_nei} is given by the ratio of phenotypic variation explained (RVE) by neighbor effects as RVEnei =\eqn{\sigma^2_2/\sigma^2_1} and p-values are not available.
 This is because a logistic mixed model \code{logistic.mm.aireml()} called via the \code{gaston} package does not provide \eqn{\sigma^2_e} and log-likelihood (see Chen et al. 2016 for the theory).
 }
 \examples{

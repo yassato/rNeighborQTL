@@ -51,13 +51,13 @@ test_that(
                        addcovar=as.matrix(cbind(fake_bc$pheno$sex,fake_bc$pheno$age)),
                        fig=FALSE)
 
-    expect_true(all(round(colkas_pve[,2],1)>=0))
-    expect_true(all(round(f2_pve[,2],1)>=0))
-    expect_true(all(round(bc_pve[,2],1)>=0))
+    expect_true(all(round(colkas_pve[,3],1)>=0))
+    expect_true(all(round(f2_pve[,3],1)>=0))
+    expect_true(all(round(bc_pve[,3],1)>=0))
 
-    expect_true(all(round(colkas_pve[,2],1)<=1))
-    expect_true(all(round(f2_pve[,2],1)<=1))
-    expect_true(all(round(bc_pve[,2],1)<=1))
+    expect_true(all(round(colkas_pve[,3],1)<=1))
+    expect_true(all(round(f2_pve[,3],1)<=1))
+    expect_true(all(round(bc_pve[,3],1)<=1))
 
 })
 
@@ -83,9 +83,9 @@ test_that(
                           addcovar=as.matrix(cbind(fake_bc$pheno$sex,fake_bc$pheno$age)),
                           response="binary", fig=FALSE)
 
-    expect_true(all(is.na(colkas_pveBin[,3])))
-    expect_true(all(is.na(f2_pveBin[,3])))
-    expect_true(all(is.na(bc_pveBin[,3])))
+    expect_true(all(is.na(colkas_pveBin[,4])))
+    expect_true(all(is.na(f2_pveBin[,4])))
+    expect_true(all(is.na(bc_pveBin[,4])))
 
   }
 )

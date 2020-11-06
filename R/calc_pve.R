@@ -13,14 +13,15 @@
 #' @return A matrix containing the maximum neighbor distance, phenotypic variation explained by neighbor effects, and p-value by a likelihood ratio test.
 #' \itemize{
 #'  \item{\code{scale}} {Maximum neighbor distance given as an argument}
+#'  \item{\code{Var_self}} {Proportion or ratio of phenotypic variation explained (PVE or RVE) by self-genotype effects for linear or logistic mixed models, respectively}
 #'  \item{\code{Var_nei}} {Proportion or ratio of phenotypic variation explained (PVE or RVE) by neighbor effects for linear or logistic mixed models, respectively}
-#'  \item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects}
+#'  \item{\code{p-value}} {p-value by a likelihood ratio test between models with or without neighbor effects. Self effects are tested when the scale is zero}
 #' }
 #' @author Yasuhiro Sato (\email{sato.yasuhiro.36c@kyoto-u.jp})
 #' @details
 #' This function calls linear or logistic mixed models via the \code{gaston} package (Perdry & Dandine-Roulland 2020).
-#' If \code{"binary"} is selected, \code{Var_nei} in the output is given by the proportion of phenotypic variation explained (PVE) by neighbor effects as PVEnei =\eqn{\sigma^2_2/(\sigma^2_1+\sigma^2_2+\sigma^2_e)}.
-#' If \code{"binary"} is selected, \code{Var_nei} is given by the ratio of phenotypic variation explained (RVE) by neighbor effects as RVEnei =\eqn{\sigma^2_2/\sigma^2_1} and p-values are not available.
+#' If \code{"quantitative"} is selected, \code{Var_self} or \code{Var_nei} in the output is given by the proportion of phenotypic variation explained (PVE) by neighbor effects as PVEnei =\eqn{\sigma^2_2/(\sigma^2_1+\sigma^2_2+\sigma^2_e)}.
+#' If \code{"binary"} is selected, \code{Var_self} or \code{Var_nei} is given by the ratio of phenotypic variation explained (RVE) by neighbor effects as RVEnei =\eqn{\sigma^2_2/\sigma^2_1} and p-values are not available.
 #' This is because a logistic mixed model \code{logistic.mm.aireml()} called via the \code{gaston} package does not provide \eqn{\sigma^2_e} and log-likelihood (see Chen et al. 2016 for the theory).
 #' @references
 #' * Perdry H, Dandine-Roulland C (2019) gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.5. https://CRAN.R-project.org/package=gaston
@@ -56,6 +57,17 @@ calc_pve = function(genoprobs, pheno, smap, s_seq, addcovar=NULL, grouping=rep(1
   }
   
   res <- c()
+  if(response=="quantitative") {
+    aireml1 <- gaston::lmm.aireml(Y=pheno, X=X, K=list(K_self), verbose=FALSE)
+    pve <- aireml1$tau/sum(aireml1$tau, aireml1$sigma)
+    p_val <- stats::pchisq(-2*(aireml1$logL0-aireml1$logL), df=1, lower.tail=FALSE)
+  } else {
+    aireml <- gaston::logistic.mm.aireml(Y=pheno, X=X, K=list(K_self), verbose=FALSE)
+    pve <- aireml$tau
+    p_val <- NA
+  }
+  res <- c(0, pve, 0, p_val)
+  
   for(s in s_seq) {
     if(class(s)=="numeric") { message("scale = ", round(s,3)) }
 
@@ -63,7 +75,7 @@ calc_pve = function(genoprobs, pheno, smap, s_seq, addcovar=NULL, grouping=rep(1
       neiprobs <- calc_neiprob(genoprobs=genoprobs, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=-1, grouping=grouping)
     } else if(contrasts[2]==TRUE) {
       neiprobs <- calc_neiprob(genoprobs=genoprobs, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=0.5, grouping=grouping, d2sq0=TRUE)
-    } else {
+    } else { #if(response=="binary"){
       neiprobs <- calc_neiprob(genoprobs=genoprobs, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=0, grouping=grouping)
     }
 
@@ -74,29 +86,31 @@ calc_pve = function(genoprobs, pheno, smap, s_seq, addcovar=NULL, grouping=rep(1
 
     if(response=="quantitative") {
       aireml2 <- gaston::lmm.aireml(Y=pheno, X=X, K=list(K_self,K_nei), verbose=FALSE)
-      aireml1 <- gaston::lmm.aireml(Y=pheno, X=X, K=list(K_self), verbose=FALSE)
-      pve <- aireml2$tau[2]/sum(aireml2$tau, aireml2$sigma)
+      pve_s <- aireml2$tau[1]/sum(aireml2$tau, aireml2$sigma)
+      pve_n <- aireml2$tau[2]/sum(aireml2$tau, aireml2$sigma)
       p_val <- stats::pchisq(-2*(aireml1$logL-aireml2$logL), df=1, lower.tail=FALSE)
     } else { #if(response=="binary"){
       aireml <- gaston::logistic.mm.aireml(Y=pheno, X=X, K=list(K_self, K_nei), verbose=FALSE)
-      pve <- aireml$tau[2]/aireml$tau[1]
+      pve_s <- aireml$tau[1]/aireml$tau[2]
+      pve_n <- aireml$tau[2]/aireml$tau[1]
       p_val <- NA
     }
-    res <- rbind(res, c(s, pve, p_val))
+    res <- rbind(res, c(s, pve_s, pve_n, p_val))
   }
-  colnames(res) <- c("scale", "Var_nei", "p-value")
+  colnames(res) <- c("scale", "Var_self", "Var_nei", "p-value")
+  rownames(res) <- NULL
 
   if(fig==TRUE) {
     res.sorted <- res[order(res[,1]),]
-    PVE <- res.sorted[,2]
-    deltaPVE <- diff(c(0, PVE))
+    PVE <- res.sorted[,3]
+    deltaPVE <- diff(PVE)
 
     switch(response,
            "quantitative" = ylab <- "deltaPVE",
            "binary" = ylab <- "deltaRVE"
     )
 
-    graphics::plot(res.sorted[,1], deltaPVE, type="o",
+    graphics::plot(res.sorted[-1,1], deltaPVE, type="o",
                    xlab="spatial scale", ylab=ylab,
                    pch=ifelse(deltaPVE==max(deltaPVE)[1],16,1))
   }

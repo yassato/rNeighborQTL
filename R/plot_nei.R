@@ -16,10 +16,26 @@ plot_nei = function(res, type=c("neighbor","self","int"), chr=NULL, th=NULL, ...
   type <- match.arg(type)
 
   if(is.null(chr)==FALSE) {
-    res = res[res$chr==chr,]
+    res <- res[res$chr==chr,]
   }
+  
+  pos <- res$pos
+  chr <- as.factor(res$chr)
+  coord <- 0
+  M <- 0
+  tic <- numeric(nlevels(chr))
+  for (i in 1:nlevels(chr)) {
+    w <- (chr == levels(chr)[i])
+    pos.c <- pos[w]
+    coord[w] <- M + pos.c
+    mx <- max(pos.c)
+    tic[i] <- M + mx/2
+    M <- M + mx
+  }
+  coord <- coord/M
+  tic <- tic/M
 
-  x <- c(1:nrow(res))
+  x <- coord
 
   switch(type,
          "self" = y <- res$LOD_self,

@@ -8,7 +8,23 @@
 plot_eff = function(res, type=c("neighbor","self")) {
   type <- match.arg(type)
 
-  x <- c(1:nrow(res))
+  pos <- res$pos
+  chr <- as.factor(res$chr)
+  coord <- 0
+  M <- 0
+  tic <- numeric(nlevels(chr))
+  for (i in 1:nlevels(chr)) {
+    w <- (chr == levels(chr)[i])
+    pos.c <- pos[w]
+    coord[w] <- M + pos.c
+    mx <- max(pos.c)
+    tic[i] <- M + mx/2
+    M <- M + mx
+  }
+  coord <- coord/M
+  tic <- tic/M
+  
+  x <- coord
 
   if(type=="neighbor") {
     a <- res$a2
