@@ -19,13 +19,11 @@ plot_eff = function(res, type=c("neighbor","self")) {
     coord[w] <- M + pos.c
     mx <- max(pos.c)
     tic[i] <- M + mx/2
-    M <- M + mx
+    M <- M + mx + (mx*0.1)
   }
-  coord <- coord/M
+  x <- coord/M
   tic <- tic/M
   
-  x <- coord
-
   if(type=="neighbor") {
     a <- res$a2
     d <- res$d2
@@ -42,4 +40,5 @@ plot_eff = function(res, type=c("neighbor","self")) {
   unobs = grep("_loc", rownames(res))
   graphics::points(x[-unobs], a[-unobs], pch=16, cex=0.75)
   graphics::points(x[-unobs], d[-unobs], pch=1, cex=0.75)
+  graphics::axis(side=1, at=tic, labels=levels(chr))
 }

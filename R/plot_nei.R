@@ -30,12 +30,10 @@ plot_nei = function(res, type=c("neighbor","self","int"), chr=NULL, th=NULL, ...
     coord[w] <- M + pos.c
     mx <- max(pos.c)
     tic[i] <- M + mx/2
-    M <- M + mx
+    M <- M + mx + (mx*0.1)
   }
-  coord <- coord/M
+  x <- coord/M
   tic <- tic/M
-
-  x <- coord
 
   switch(type,
          "self" = y <- res$LOD_self,
@@ -60,4 +58,5 @@ plot_nei = function(res, type=c("neighbor","self","int"), chr=NULL, th=NULL, ...
   unobs = grep("_loc", rownames(res))
   graphics::points(x[-unobs], y[-unobs], pch=16, cex=0.75)
   graphics::abline(h=th, col=grDevices::grey(0.5,0.5), lty=2)
+  graphics::axis(side=1, at=tic, labels=levels(chr))
 }
