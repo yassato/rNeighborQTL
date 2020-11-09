@@ -50,7 +50,7 @@ colkas_pve <- calc_pve(genoprobs=colkas_genoprob,
 ```{r eff, fig.width=4, fig.height=8}
 colkas_eff <- eff_neighbor(genoprobs=colkas_genoprob,
                            pheno=log(colkas$pheno[,5]+1),
-                           smap=smap_colkas, scale=7,
+                           smap=smap_colkas, scale=7.81,
                            addcovar=as.matrix(colkas$pheno[,7:9])
                            )
 ```
@@ -60,7 +60,7 @@ colkas_eff <- eff_neighbor(genoprobs=colkas_genoprob,
 ```{r LOD}
 colkas_scan <- scan_neighbor(genoprobs=colkas_genoprob, 
                              pheno=log(colkas$pheno[,5]+1),
-                             smap=smap_colkas, scale=7, 
+                             smap=smap_colkas, scale=7.81, 
                              addcovar=as.matrix(colkas$pheno[,7:9])
                              )
 plot_nei(colkas_scan)
@@ -69,7 +69,7 @@ plot_nei(colkas_scan)
 ```{r perm, eval=FALSE}
 colkas_perm <- perm_neighbor(genoprobs=colkas_genoprob, 
                              pheno=log(colkas$pheno[,5]+1),
-                             smap=smap_colkas, scale=7,
+                             smap=smap_colkas, scale=7.81,
                              addcovar=as.matrix(colkas$pheno[,6:8]),
                              times=3, p_val=c(0.5,0.1)
                              )
@@ -93,7 +93,7 @@ plot(colkas_scanone)
 ```{r CIM, eval=FALSE}
 colkas_cim <- scan_neighbor(genoprobs=colkas_genoprob, 
                             pheno=log(colkas$pheno[,5]+1),
-                            smap=smap_colkas, scale=7,
+                            smap=smap_colkas, scale=7.81,
                             addcovar=as.matrix(colkas$pheno[,7:9]),
                             addQTL="c4_nga8"
                             )
@@ -105,7 +105,7 @@ plot_nei(colkas_cim)
 ```{r int, eval=FALSE}
 colkas_int <- int_neighbor(genoprobs=colkas_genoprob, 
                            pheno=log(colkas$pheno[,5]+1), 
-                           smap=smap_colkas, scale=7, 
+                           smap=smap_colkas, scale=7.81, 
                            addcovar=as.matrix(colkas$pheno[,7:9]), 
                            addQTL="c4_nga8", intQTL="c4_nga8"
                            )
@@ -125,7 +125,7 @@ colkas_pveBin <- calc_pve(genoprobs=colkas_genoprob,
 
 colkas_scanBin <- scan_neighbor(genoprobs=colkas_genoprob, 
                                 pheno=colkas$pheno[,7],
-                                smap=smap_colkas, scale=2.24,
+                                smap=smap_colkas, scale=3.16,
                                 addcovar=as.matrix(colkas$pheno[,8:9]), 
                                 response="binary")
 
@@ -154,7 +154,7 @@ pve_f2 <- calc_pve(genoprobs=genoprobs_f2,
                    addcovar=as.matrix(cbind(fake_f2$pheno$sex,fake_f2$pheno$pgm)),
                    fig=FALSE)
     
-deltaPVE <- pve_f2[,2] - c(0,pve_f2[1:4,2])
+deltaPVE <- pve_f2[-1,2] - c(0,pve_f2[2:5,2])
 argmax_s <- s_seq[1:5][deltaPVE==max(deltaPVE)]
     
 scan_f2 <- scan_neighbor(genoprobs=genoprobs_f2,
@@ -185,7 +185,7 @@ pve_bc <- calc_pve(genoprobs=genoprobs_bc,
                    addcovar=as.matrix(cbind(fake_bc$pheno$sex,fake_bc$pheno$age)),
                    fig=FALSE)
     
-deltaPVE <- pve_bc[,2] - c(0,pve_bc[1:4,2])
+deltaPVE <- pve_bc[-1,2] - c(0,pve_bc[2:5,2])
 argmax_s <- s_seq[1:5][deltaPVE==max(deltaPVE)]
     
 scan_bc <- scan_neighbor(genoprobs=genoprobs_bc,
