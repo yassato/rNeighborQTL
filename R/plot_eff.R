@@ -19,7 +19,7 @@ plot_eff = function(res, type=c("neighbor","self")) {
     coord[w] <- M + pos.c
     mx <- max(pos.c)
     tic[i] <- M + mx/2
-    M <- M + mx + (mx*0.1)
+    M <- M + mx + max(pos)*0.2
   }
   x <- coord/M
   tic <- tic/M

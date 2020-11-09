@@ -1,6 +1,6 @@
 Package: rNeighborQTL
 Title: Interval Mapping for Quantitative Trait Loci Underlying Neighbor Effects
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(
     person(given = "Yasuhiro", family = "Sato", role = c("aut", "cre"), email = "sato.yasuhiro.36c@kyoto-u.jp", comment = c(ORCID = "0000-0002-6466-723X")),
 	person(given = "Kazuya", family = "Takeda", role = "aut"),
