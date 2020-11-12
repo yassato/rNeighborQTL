@@ -2,8 +2,8 @@
 An R package for interval QTL mapping of neighbor effects.  
 
 ## Installation
-Please install it via GitHub by running *devtools::install_github("yassato/rNeighborQTL")*.  
-Also available via CRAN at https://cran.r-project.org/package=rNeighborQTL.  
+CRAN version is available at https://cran.r-project.org/package=rNeighborQTL.  
+To install the deveper version via GitHub, run *devtools::install_github("yassato/rNeighborQTL", repo="master")*.  
 
 ## Dependency
 Note that the rNeighborQTL requires the following R packages.  
