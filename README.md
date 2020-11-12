@@ -1,4 +1,4 @@
-# rNeighborQTL: An R package for interval QTL mapping of neighbor effects.  
+# rNeighborQTL  
 The "rNeighborQTL" package provides a set of functions to perform a genome scan of neighbor QTL effects.  
 
 ## Installation
