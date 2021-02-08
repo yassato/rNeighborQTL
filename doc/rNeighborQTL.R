@@ -112,7 +112,7 @@ pve_f2 <- calc_pve(genoprobs=genoprobs_f2,
                    addcovar=as.matrix(cbind(fake_f2$pheno$sex,fake_f2$pheno$pgm)),
                    fig=FALSE)
     
-deltaPVE <- pve_f2[-1,3] - c(0,pve_f2[1:4,3])
+deltaPVE <- pve_f2[,2] - c(0,pve_f2[1:4,2])
 argmax_s <- s_seq[1:5][deltaPVE==max(deltaPVE)]
     
 scan_f2 <- scan_neighbor(genoprobs=genoprobs_f2,
@@ -142,7 +142,7 @@ pve_bc <- calc_pve(genoprobs=genoprobs_bc,
                    addcovar=as.matrix(cbind(fake_bc$pheno$sex,fake_bc$pheno$age)),
                    fig=FALSE)
     
-deltaPVE <- pve_bc[-1,3] - c(0,pve_bc[1:4,3])
+deltaPVE <- pve_bc[,2] - c(0,pve_bc[1:4,2])
 argmax_s <- s_seq[1:5][deltaPVE==max(deltaPVE)]
     
 scan_bc <- scan_neighbor(genoprobs=genoprobs_bc,

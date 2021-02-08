@@ -15,10 +15,10 @@ knitr::opts_chunk$set(
 ```
 
 ## Overview
-<p>The "rNeighborQTL" package includes core functions to perform QTL mapping of neighbor effects. Taking conditional genotype probabilities from the "R/qtl" package (Broman et al. 2003), the "scan_neighbor()" calculates neighbor genotypic identity and performs interval mapping of neighbor QTL effects. The neighbor QTL requires spatial information, namely individual positions along the x- and y-axes, in addition to the genotype and phenotype data. See Sato, Takeda & Nagano (2021) for the theoretical background.</p>
+<p>The "rNeighborQTL" package includes core functions to perform QTL mapping of neighbor effects. Taking conditional genotype probabilities from the "R/qtl" package (Broman et al. 2003), the "scan_neighbor()" calculates neighbor genotypic identity and performs interval mapping of neighbor QTL effects. The neighbor QTL requires spatial information, namely individual positions along the x- and y-axes, in addition to the genotype and phenotype data. See Sato, Takeda & Nagano (2020) for the theoretical background.</p>
 
 ## Input files
-<p>First, let us prepare input data using the "R/qtl" package (Broman et al. 2003). Here is an example to import .csv files into a 'cross' object and calculate conditional self-genotype probabilities. In this example, we import insect herbivory data on Col x Kas recombinant inbred lines (RILs) of *Arabidopsis thaliana* (Wilson et al. 2001; Sato, Takeda & Nagano 2021).</p>
+<p>First, let us prepare input data using the "R/qtl" package (Broman et al. 2003). Here is an example to import .csv files into a 'cross' object and calculate conditional self-genotype probabilities. In this example, we import insect herbivory data on Col x Kas recombinant inbred lines (RILs) of *Arabidopsis thaliana* (Wilson et al. 2001; Sato, Takeda & Nagano 2020).</p>
 ```{r input}
 colkas <- qtl::read.cross(format="csvs",dir="../inst",
                           genfile="ColKas_geno.csv",
@@ -154,7 +154,7 @@ pve_f2 <- calc_pve(genoprobs=genoprobs_f2,
                    addcovar=as.matrix(cbind(fake_f2$pheno$sex,fake_f2$pheno$pgm)),
                    fig=FALSE)
     
-deltaPVE <- pve_f2[-1,3] - c(0,pve_f2[1:4,3])
+deltaPVE <- pve_f2[,2] - c(0,pve_f2[1:4,2])
 argmax_s <- s_seq[1:5][deltaPVE==max(deltaPVE)]
     
 scan_f2 <- scan_neighbor(genoprobs=genoprobs_f2,
@@ -185,7 +185,7 @@ pve_bc <- calc_pve(genoprobs=genoprobs_bc,
                    addcovar=as.matrix(cbind(fake_bc$pheno$sex,fake_bc$pheno$age)),
                    fig=FALSE)
     
-deltaPVE <- pve_bc[-1,3] - c(0,pve_bc[1:4,3])
+deltaPVE <- pve_bc[,2] - c(0,pve_bc[1:4,2])
 argmax_s <- s_seq[1:5][deltaPVE==max(deltaPVE)]
     
 scan_bc <- scan_neighbor(genoprobs=genoprobs_bc,
@@ -205,7 +205,7 @@ plot_nei(scan_bc)
 - Haley CS, Knott SA. 1992. A simple regression method for mapping quantitative trait loci in line crosses using flanking markers. Heredity 69: 315-324.
 - Jansen RC. 1993. Interval mapping of multiple quantitative trait loci. Genetics 135: 205-211.
 - Perdry H, Dandine-Roulland C. 2020. gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.6. https://CRAN.R-project.org/package=gaston
-- Sato Y, Takeda K, Nagano AJ. 2021. Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics https://doi.org/10.1093/g3journal/jkab017
+- Sato Y, Takeda K, Nagano AJ. 2020. Neighbor QTL: an interval mapping method for quantitative trait loci underlying neighbor effects. bioRxiv https://doi.org/10.1101/2020.05.20.089474
 - Wilson IW, Schiff CL, Hughes DE, Somerville SC. 2001. Quantitative trait loci analysis of powdery mildew disease resistance in the *Arabidopsis thaliana* accession kashmir-1. Genetics 158: 1301-1309.
 
 

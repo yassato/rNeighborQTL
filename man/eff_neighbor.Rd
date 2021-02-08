@@ -56,7 +56,7 @@ A function to estimate additive and dominance deviation for self and neighbor QT
 Similar to Haley-Knott regression (Haley & Knott 1992), the additive and dominance deviations are approximated by a regression of trait values on conditional genotype probabilities.
 The self QTL effects \code{a1} and \code{d1} are estimated in the same way as the \code{qtl} package performs the Haley-Knott regression.
 If \code{contrasts = c(TRUE, TRUE, TRUE)}, neighbor QTL effects \code{a1} and \code{d1} are estimated using a quadratic regression; otherwise, the additive neighbor effects are estimated using a linear regression.
-See also Sato, Takeda & Nagano (2021) for the rationale behind the approximation.
+See also Sato, Takeda & Nagano (2020) for the rationale behind the approximation.
 }
 \examples{
 set.seed(1234)
@@ -74,7 +74,7 @@ test_eff <- eff_neighbor(genoprobs=test_genoprobs,
 \itemize{
 \item Haley CS, Knott SA (1992) A simple regression method for mapping quantitative trait loci in line crosses using flanking markers. Heredity 69:315-324.
 \item Jansen RC (1993) Interval mapping of multiple quantitative trait loci. Genetics 135:205-211.
-\item Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics \url{https://doi.org/10.1093/g3journal/jkab017}
+\item Sato Y, Takeda K, Nagano AJ (2020) Neighbor QTL: an interval mapping method for quantitative trait loci underlying neighbor effects. bioRxiv \url{https://doi.org/10.1101/2020.05.20.089474}
 }
 }
 \author{

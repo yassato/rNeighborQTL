@@ -24,7 +24,7 @@
 #' If \code{"binary"} is selected, \code{Var_self} or \code{Var_nei} is given by the ratio of phenotypic variation explained (RVE) by neighbor effects as RVEnei =\eqn{\sigma^2_2/\sigma^2_1} and p-values are not available.
 #' This is because a logistic mixed model \code{logistic.mm.aireml()} called via the \code{gaston} package does not provide \eqn{\sigma^2_e} and log-likelihood (see Chen et al. 2016 for the theory).
 #' @references
-#' * Perdry H, Dandine-Roulland C (2020) gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.6. https://CRAN.R-project.org/package=gaston
+#' * Perdry H, Dandine-Roulland C (2019) gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.5. https://CRAN.R-project.org/package=gaston
 #' * Chen H, Wang C, Conomos M. et al. (2016) Control for population structure and relatedness for binary traits in genetic association studies via logistic mixed models. The American Journal of Human Genetics 98: 653-666.
 #' @import gaston Matrix
 #' @examples
@@ -55,7 +55,7 @@ calc_pve = function(genoprobs, pheno, smap, s_seq, addcovar=NULL, grouping=rep(1
   } else {
     X <- stats::model.matrix(~addcovar)
   }
-
+  
   res <- c()
   if(response=="quantitative") {
     aireml1 <- gaston::lmm.aireml(Y=pheno, X=X, K=list(K_self), verbose=FALSE)
@@ -67,7 +67,7 @@ calc_pve = function(genoprobs, pheno, smap, s_seq, addcovar=NULL, grouping=rep(1
     p_val <- NA
   }
   res <- c(0, pve, 0, p_val)
-
+  
   for(s in s_seq) {
     if(class(s)=="numeric") { message("scale = ", round(s,3)) }
 

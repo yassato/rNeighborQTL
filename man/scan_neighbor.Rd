@@ -45,7 +45,7 @@ A matrix of LOD scores for self and neighbor effects, with the chromosome number
 }
 }
 \description{
-Genome scan using a QTL model for self and neighbor effects, with possible allowance for additional covariates and non-normal traits. Theoretical background is described in Sato, Takeda & Nagano (2021).
+Genome scan using a QTL model for self and neighbor effects, with possible allowance for additional covariates and non-normal traits. Theoretical background is described in Sato, Takeda & Nagano (2020).
 }
 \details{
 This function calculates LOD score after the additive and dominance deviation are estimated using \code{eff_neighbor()}.
@@ -68,7 +68,7 @@ plot_nei(test_scan)
 \references{
 \itemize{
 \item Jansen RC (1993) Interval mapping of multiple quantitative trait loci. Genetics 135:205-211.
-\item Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics \url{https://doi.org/10.1093/g3journal/jkab017}
+\item Sato Y, Takeda K, Nagano AJ (2020) Neighbor QTL: an interval mapping method for quantitative trait loci underlying neighbor effects. bioRxiv \url{https://doi.org/10.1101/2020.05.20.089474}
 }
 }
 \seealso{
