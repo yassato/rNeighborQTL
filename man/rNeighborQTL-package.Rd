@@ -7,7 +7,7 @@
 \title{rNeighbor QTL: quantitative trait loci mapping for neighbor effects}
 \description{
 The "rNeighborQTL" package provides a set of functions to perform a genome scan of neighbor QTL effects.
-Theoretical background is described in Sato, Takeda & Nagano (2020).
+Theoretical background is described in Sato, Takeda & Nagano (2021).
 See \code{vignette("rNeighborQTL")} for how to use this package.
 }
 \details{
@@ -17,8 +17,8 @@ Alternative to QTL mapping, \code{rNeighborGWAS} package is also available for g
 }
 \references{
 \itemize{
-\item Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2019) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory on \emph{Arabidopsis thaliana}. bioRxiv \url{https://doi.org/10.1101/845735}
-\item Sato Y, Takeda K, Nagano AJ (2020) Neighbor QTL: an interval mapping method for quantitative trait loci underlying neighbor effects. bioRxiv \url{https://doi.org/10.1101/2020.05.20.089474}
+\item Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2021) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory. Heredity \url{https://doi.org/10.1038/s41437-020-00401-w}
+\item Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics \url{https://doi.org/10.1093/g3journal/jkab017}
 }
 }
 \author{

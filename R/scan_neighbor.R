@@ -1,6 +1,6 @@
 #' Genome scan for neighbor effects with a QTL model
 #'
-#' Genome scan using a QTL model for self and neighbor effects, with possible allowance for additional covariates and non-normal traits. Theoretical background is described in Sato, Takeda & Nagano (2020).
+#' Genome scan using a QTL model for self and neighbor effects, with possible allowance for additional covariates and non-normal traits. Theoretical background is described in Sato, Takeda & Nagano (2021).
 #' @param genoprobs Conditional genotype probabilities as taken from \code{qtl::calc.genoprob()}.
 #' @param pheno A vector of individual phenotypes.
 #' @param contrasts A vector composed of three TRUE/FALSE values. Depending on the crossing design, it represents the presence/absence of specific genotypes as c(TRUE/FALSE, TRUE/FALSE, TRUE/FALSE) = AA, AB, BB.
@@ -26,7 +26,7 @@
 #' Note that the results return 0 LOD scores for covariate markers when using \code{addQTL} option.
 #' @references
 #' * Jansen RC (1993) Interval mapping of multiple quantitative trait loci. Genetics 135:205-211.
-#' * Sato Y, Takeda K, Nagano AJ (2020) Neighbor QTL: an interval mapping method for quantitative trait loci underlying neighbor effects. bioRxiv \url{https://doi.org/10.1101/2020.05.20.089474}
+#' * Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics \url{https://doi.org/10.1093/g3journal/jkab017}
 #' @examples
 #' set.seed(1234)
 #' test_map <- qtl::sim.map(len=rep(20,5),n.mar=3,include.x=FALSE)

@@ -68,7 +68,7 @@ test_pve <- calc_pve(genoprobs=test_genoprobs,
 }
 \references{
 \itemize{
-\item Perdry H, Dandine-Roulland C (2019) gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.5. https://CRAN.R-project.org/package=gaston
+\item Perdry H, Dandine-Roulland C (2020) gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.6. https://CRAN.R-project.org/package=gaston
 \item Chen H, Wang C, Conomos M. et al. (2016) Control for population structure and relatedness for binary traits in genetic association studies via logistic mixed models. The American Journal of Human Genetics 98: 653-666.
 }
 }

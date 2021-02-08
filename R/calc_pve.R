@@ -24,7 +24,7 @@
 #' If \code{"binary"} is selected, \code{Var_self} or \code{Var_nei} is given by the ratio of phenotypic variation explained (RVE) by neighbor effects as RVEnei =\eqn{\sigma^2_2/\sigma^2_1} and p-values are not available.
 #' This is because a logistic mixed model \code{logistic.mm.aireml()} called via the \code{gaston} package does not provide \eqn{\sigma^2_e} and log-likelihood (see Chen et al. 2016 for the theory).
 #' @references
-#' * Perdry H, Dandine-Roulland C (2019) gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.5. https://CRAN.R-project.org/package=gaston
+#' * Perdry H, Dandine-Roulland C (2020) gaston: Genetic Data Handling (QC, GRM, LD, PCA) & Linear Mixed Models. R package version 1.5.6. https://CRAN.R-project.org/package=gaston
 #' * Chen H, Wang C, Conomos M. et al. (2016) Control for population structure and relatedness for binary traits in genetic association studies via logistic mixed models. The American Journal of Human Genetics 98: 653-666.
 #' @import gaston Matrix
 #' @examples
@@ -41,28 +41,21 @@
 #'                      )
 #' @export
 calc_pve = function(genoprobs, pheno, smap, s_seq, addcovar=NULL, grouping=rep(1,nrow(smap)), response=c("quantitative","binary"), fig=TRUE, contrasts=NULL) {
-  
-  scaling = function(vec) {
-    return((vec-mean(vec))/stats::sd(vec))
-  }
-  
+
   response <- match.arg(response)
-  
+
   selfprobs <- genoprobs2selfprobs(genoprobs=genoprobs, a1=1, d1=0, contrasts=contrasts)
-  p <- nrow(selfprobs)
   contrasts <- attr(selfprobs, "contrasts")
-  selfprobs <- mapply(function(x) { scaling(selfprobs[x,]) }, 1:p)
-  selfprobs <- t(selfprobs)
-  
+  selfprobs <- (selfprobs-mean(selfprobs))/stats::sd(selfprobs)
   K_self <- tcrossprod(selfprobs)/(ncol(selfprobs)-1)
   K_self <- as.matrix(Matrix::nearPD(K_self, maxit=10^6)$mat)
-  
+
   if(is.null(addcovar)) {
     X <- matrix(1, nrow=length(pheno))
   } else {
     X <- stats::model.matrix(~addcovar)
   }
-  
+
   res <- c()
   if(response=="quantitative") {
     aireml1 <- gaston::lmm.aireml(Y=pheno, X=X, K=list(K_self), verbose=FALSE)
@@ -74,10 +67,10 @@ calc_pve = function(genoprobs, pheno, smap, s_seq, addcovar=NULL, grouping=rep(1
     p_val <- NA
   }
   res <- c(0, pve, 0, p_val)
-  
+
   for(s in s_seq) {
     if(class(s)=="numeric") { message("scale = ", round(s,3)) }
-    
+
     if((contrasts[2]==TRUE)&(contrasts[3]==FALSE)) {
       neiprobs <- calc_neiprob(genoprobs=genoprobs, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=-1, grouping=grouping)
     } else if(contrasts[2]==TRUE) {
@@ -85,13 +78,12 @@ calc_pve = function(genoprobs, pheno, smap, s_seq, addcovar=NULL, grouping=rep(1
     } else { #if(response=="binary"){
       neiprobs <- calc_neiprob(genoprobs=genoprobs, contrasts=contrasts, smap=smap, scale=s, a2=1, d2=0, grouping=grouping)
     }
-    
-    neiprobs <- mapply(function(x) { scaling(neiprobs[x,]) }, 1:p)
-    neiprobs <- t(neiprobs)
-    
+
+    neiprobs <- (neiprobs-mean(neiprobs))/stats::sd(neiprobs)
+
     K_nei <- tcrossprod(neiprobs)/(ncol(neiprobs)-1)
     K_nei <- as.matrix(Matrix::nearPD(K_nei, maxit=10^6)$mat)
-    
+
     if(response=="quantitative") {
       aireml2 <- gaston::lmm.aireml(Y=pheno, X=X, K=list(K_self,K_nei), verbose=FALSE)
       pve_s <- aireml2$tau[1]/sum(aireml2$tau, aireml2$sigma)
@@ -107,17 +99,17 @@ calc_pve = function(genoprobs, pheno, smap, s_seq, addcovar=NULL, grouping=rep(1
   }
   colnames(res) <- c("scale", "Var_self", "Var_nei", "p-value")
   rownames(res) <- NULL
-  
+
   if(fig==TRUE) {
     res.sorted <- res[order(res[,1]),]
     PVE <- res.sorted[,3]
     deltaPVE <- diff(PVE)
-    
+
     switch(response,
            "quantitative" = ylab <- "deltaPVE",
            "binary" = ylab <- "deltaRVE"
     )
-    
+
     graphics::plot(res.sorted[-1,1], deltaPVE, type="o",
                    xlab="spatial scale", ylab=ylab,
                    pch=ifelse(deltaPVE==max(deltaPVE)[1],16,1))
