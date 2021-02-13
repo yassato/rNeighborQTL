@@ -16,3 +16,6 @@ version 1.1.2 (developer version): recreated using R version 4.0.3; citations up
 version 1.1.1 (CRAN release version): partial PVEs separated in calc_PVEnei(); plot_nei() refined.  
 version 1.1.0: calc_neiprob(), eff_neighbor(), scan_neighbor() refactored.  
 version 1.0.0: Initial version registered in CRAN.  
+
+## References  
+Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics https://doi.org/10.1093/g3journal/jkab017  
