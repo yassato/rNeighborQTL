@@ -12,7 +12,7 @@ Note that the rNeighborQTL requires the following R packages.
 - qtl
 
 ## Release Note  
-version 1.1.2 (developer version): recreated using R version 4.0.3; citations updated.  
+version 1.1.2 (developer version): rebuild using R version 4.0.3; citations updated.  
 version 1.1.1 (CRAN release version): partial PVEs separated in calc_PVEnei(); plot_nei() refined.  
 version 1.1.0: calc_neiprob(), eff_neighbor(), scan_neighbor() refactored.  
 version 1.0.0: Initial version registered in CRAN.  
