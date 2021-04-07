@@ -17,8 +17,8 @@ Alternative to QTL mapping, \code{rNeighborGWAS} package is also available for g
 }
 \references{
 \itemize{
-\item Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2021) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory. Heredity \url{https://doi.org/10.1038/s41437-020-00401-w}
-\item Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics \url{https://doi.org/10.1093/g3journal/jkab017}
+\item Sato Y, Yamamoto E, Shimizu KK, Nagano AJ (2021) Neighbor GWAS: incorporating neighbor genotypic identity into genome-wide association studies of field herbivory. Heredity 126:597–614. \url{https://doi.org/10.1038/s41437-020-00401-w}
+\item Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics 11:jkab017. \url{https://doi.org/10.1093/g3journal/jkab017}
 }
 }
 \author{

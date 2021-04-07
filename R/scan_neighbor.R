@@ -26,7 +26,7 @@
 #' Note that the results return 0 LOD scores for covariate markers when using \code{addQTL} option.
 #' @references
 #' * Jansen RC (1993) Interval mapping of multiple quantitative trait loci. Genetics 135:205-211.
-#' * Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics \url{https://doi.org/10.1093/g3journal/jkab017}
+#' * Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics 11:jkab017. \url{https://doi.org/10.1093/g3journal/jkab017}
 #' @examples
 #' set.seed(1234)
 #' test_map <- qtl::sim.map(len=rep(20,5),n.mar=3,include.x=FALSE)

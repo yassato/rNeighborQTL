@@ -8,8 +8,10 @@ citEntry(
                         as.person("Atsushi J. Nagano")
                         ),
   journal  = "G3; Genes|Genomes|Genetics",
+  volume = "11",
+  number = "2",
   year     = "2021",
   DOI      = "10.1093/g3journal/jkab017",
   url      = "https://doi.org/10.1093/g3journal/jkab017",
-  textVersion = paste("Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics https://doi.org/10.1093/g3journal/jkab017")
+  textVersion = paste("Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics 11(2):jkab017. https://doi.org/10.1093/g3journal/jkab017")
 )

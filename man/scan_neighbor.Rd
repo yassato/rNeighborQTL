@@ -68,7 +68,7 @@ plot_nei(test_scan)
 \references{
 \itemize{
 \item Jansen RC (1993) Interval mapping of multiple quantitative trait loci. Genetics 135:205-211.
-\item Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics \url{https://doi.org/10.1093/g3journal/jkab017}
+\item Sato Y, Takeda K, Nagano AJ (2021) Neighbor QTL: an interval mapping method for quantitative trait loci underlying plant neighborhood effects. G3; Genes|Genomes|Genetics 11:jkab017. \url{https://doi.org/10.1093/g3journal/jkab017}
 }
 }
 \seealso{
